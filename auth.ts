@@ -62,17 +62,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         async jwt({ token, user, trigger }) {
             if (user) {
                 token.id = user.id;
+                token.email = user.email;
                 token.onboarded = (user as any).onboarded;
             }
             // Re-read onboarded status from DB when session is updated or on each sign-in
             if (trigger === "update" || (token.id && !token.onboarded)) {
                 const dbUser = await prisma.user.findUnique({
                     where: { id: token.id as string },
-                    select: { onboarded: true, cityId: true }
+                    select: { onboarded: true, cityId: true, role: true }
                 });
                 if (dbUser) {
                     token.onboarded = dbUser.onboarded;
                     token.cityId = dbUser.cityId;
+                    token.role = dbUser.role;
                 }
             }
             return token;
@@ -80,8 +82,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         async session({ session, token }) {
             if (token && session.user) {
                 session.user.id = token.id as string;
+                session.user.email = token.email as string;
                 (session.user as any).onboarded = token.onboarded;
                 (session.user as any).cityId = token.cityId;
+                (session.user as any).role = token.role;
             }
             return session;
         },

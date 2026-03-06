@@ -9,8 +9,11 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   keywords: "developer community India, tech professionals, freshers, local tech meetup, Nagpur developers",
   icons: {
-    icon: "/images/logo.png",
-    apple: "/images/logo.png",
+    icon: [
+      { url: "/images/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/favicon-rounded.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/images/favicon-rounded.png",
   },
   openGraph: {
     title: "DevCircle",
