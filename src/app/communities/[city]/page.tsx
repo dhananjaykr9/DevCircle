@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { MapPin, Users, MessageSquare, Zap, Calendar, ArrowRight, Star, Code2, Award } from "lucide-react";
+import { MapPin, Users, MessageSquare, Zap, Calendar, ArrowRight, Star, Code2, Award, Globe, BookOpen, Rocket, Shield, Heart, Target, Lightbulb, TrendingUp, HandHeart, Coffee } from "lucide-react";
 import Footer from "@/components/Footer";
+import WaitlistButton from "@/components/WaitlistButton";
 import prisma from "@/lib/prisma";
 
 export async function generateStaticParams() {
@@ -158,9 +159,7 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                                 Join Community <ArrowRight size={15} />
                             </Link>
                         ) : (
-                            <button className="btn-secondary" style={{ cursor: "default", opacity: 0.8 }}>
-                                Join Waitlist
-                            </button>
+                            <WaitlistButton cityName={cityData.name} variant="primary" />
                         )}
                     </div>
 
@@ -215,9 +214,7 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                                 </p>
                             </div>
                         </div>
-                        <button className="btn-secondary" style={{ fontSize: 12, padding: "8px 18px", borderRadius: 8, cursor: "default" }}>
-                            Join Waitlist
-                        </button>
+                        <WaitlistButton cityName={cityData.name} variant="banner" />
                     </div>
                 </div>
             )}
@@ -378,22 +375,163 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                             )}
 
                             {currentTab === "about" && (
-                                <>
-                                    <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 20 }}>
-                                        About DevCircle {cityData.name}
-                                    </h2>
-                                    <div className="glass-card" style={{ padding: 28 }}>
-                                        <p style={{ fontSize: 15, color: "rgba(240,244,255,0.6)", lineHeight: 1.8, marginBottom: 24 }}>
-                                            DevCircle {cityData.name} is a hyper-local tech community in {cityData.state}. We connect professionals and freshers
-                                            for collaboration, mentorship, and growth. Join {cityData._count.members} members building the future of tech in {cityData.name}.
-                                        </p>
-                                        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                                            {cityData.tags?.split(',').map((tag) => (
-                                                <span key={tag} className="tag tag-blue" style={{ fontSize: 12 }}>{tag}</span>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+
+                                    {/* Hero About Card */}
+                                    <div className="glass-card" style={{ padding: 0, overflow: "hidden", position: "relative" }}>
+                                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: cityData.isActive ? "linear-gradient(90deg, #f97316, #ea580c, #f97316)" : "linear-gradient(90deg, #8b5cf6, #a78bfa, #8b5cf6)" }} />
+                                        <div style={{ padding: "36px 32px 28px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                                                <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg, #f97316, #ea580c)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14, color: "white", fontFamily: "'Space Grotesk', sans-serif", flexShrink: 0 }}>DC</div>
+                                                <div>
+                                                    <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 22, fontWeight: 800, color: "#f0f4ff", letterSpacing: "-0.5px", margin: 0 }}>
+                                                        About DevCircle <span style={{ color: "#f97316" }}>{cityData.name}</span>
+                                                    </h2>
+                                                    <div style={{ fontSize: 12, color: "rgba(240,244,255,0.4)", marginTop: 2 }}>
+                                                        {cityData.state} · {cityData.tier} · Est. 2025
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p style={{ fontSize: 15, color: "rgba(240,244,255,0.55)", lineHeight: 1.85, marginBottom: 20, maxWidth: 600 }}>
+                                                DevCircle {cityData.name} is a hyper-local tech community connecting {cityData._count.members} developers, designers, and tech enthusiasts across {cityData.name}. We foster collaboration, mentorship, and real-world project building for professionals and freshers alike.
+                                            </p>
+                                            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                                                {cityData.tags?.split(',').map((tag) => (
+                                                    <span key={tag} className="tag tag-blue" style={{ fontSize: 11 }}>{tag}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Status Card */}
+                                    <div className="glass-card" style={{ padding: "24px 28px", background: cityData.isActive ? "rgba(16,185,129,0.04)" : "rgba(139,92,246,0.04)", borderColor: cityData.isActive ? "rgba(16,185,129,0.12)" : "rgba(139,92,246,0.12)" }}>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                                <div style={{ width: 10, height: 10, borderRadius: "50%", background: cityData.isActive ? "#10b981" : "#a78bfa", boxShadow: `0 0 10px ${cityData.isActive ? "rgba(16,185,129,0.5)" : "rgba(139,92,246,0.5)"}` }} />
+                                                <div>
+                                                    <div style={{ fontWeight: 700, fontSize: 15, color: cityData.isActive ? "#10b981" : "#a78bfa" }}>
+                                                        {cityData.isActive ? "Community is Live" : "Community on Waitlist"}
+                                                    </div>
+                                                    <div style={{ fontSize: 12, color: "rgba(240,244,255,0.4)" }}>
+                                                        {cityData.isActive
+                                                            ? "Open for new members, discussions, events, and projects."
+                                                            : `DevCircle ${cityData.name} is not yet live. Join the waitlist to get notified.`}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {cityData.isActive ? (
+                                                <Link href={`/communities/${cityData.id}`} className="btn-primary" style={{ fontSize: 13, padding: "10px 20px", borderRadius: 10 }}>
+                                                    Join Community <ArrowRight size={13} />
+                                                </Link>
+                                            ) : (
+                                                <WaitlistButton cityName={cityData.name} variant="small" />
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Community Stats Grid */}
+                                    <div>
+                                        <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 16, fontWeight: 700, color: "#f0f4ff", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                                            <TrendingUp size={16} color="#f97316" /> Community Stats
+                                        </h3>
+                                        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }} className="about-stats-grid">
+                                            {[
+                                                { val: cityData._count.members.toLocaleString(), label: "Members", icon: <Users size={18} />, color: "#f97316", bg: "rgba(249,115,22,0.08)" },
+                                                { val: String(cityData._count.posts), label: "Discussions", icon: <MessageSquare size={18} />, color: "#8b5cf6", bg: "rgba(139,92,246,0.08)" },
+                                                { val: String(cityData._count.events), label: "Events Hosted", icon: <Calendar size={18} />, color: "#3b82f6", bg: "rgba(59,130,246,0.08)" },
+                                            ].map((stat) => (
+                                                <div key={stat.label} className="glass-card" style={{ padding: "22px 16px", textAlign: "center", border: `1px solid ${stat.bg}` }}>
+                                                    <div style={{ color: stat.color, marginBottom: 10, display: "flex", justifyContent: "center", filter: `drop-shadow(0 0 4px ${stat.bg})` }}>{stat.icon}</div>
+                                                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 24, color: "#f0f4ff", letterSpacing: "-0.5px" }}>{stat.val}</div>
+                                                    <div style={{ fontSize: 11, color: "rgba(240,244,255,0.4)", marginTop: 3 }}>{stat.label}</div>
+                                                </div>
                                             ))}
                                         </div>
                                     </div>
-                                </>
+
+                                    {/* What We Offer */}
+                                    <div>
+                                        <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 16, fontWeight: 700, color: "#f0f4ff", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                                            <Lightbulb size={16} color="#f59e0b" /> What We Offer
+                                        </h3>
+                                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }} className="about-offer-grid">
+                                            {[
+                                                { icon: <MessageSquare size={18} />, title: "Tech Discussions", desc: "Ask questions, share knowledge, debate best practices with local devs.", color: "#8b5cf6" },
+                                                { icon: <Calendar size={18} />, title: "Local Events", desc: "Meetups, hackathons, workshops, and talks hosted in your city.", color: "#3b82f6" },
+                                                { icon: <Rocket size={18} />, title: "Project Collaboration", desc: "Find co-founders, team up on open-source, build together.", color: "#f97316" },
+                                                { icon: <HandHeart size={18} />, title: "Mentorship", desc: "Get guidance from experienced devs or mentor newcomers.", color: "#10b981" },
+                                                { icon: <BookOpen size={18} />, title: "Learning Hub", desc: "Curated resources, roadmaps, and study groups for all levels.", color: "#f59e0b" },
+                                                { icon: <Target size={18} />, title: "Job Board", desc: "Local job listings, freelance gigs, and startup opportunities.", color: "#ef4444" },
+                                            ].map((item) => (
+                                                <div key={item.title} className="glass-card" style={{ padding: "20px 22px", display: "flex", gap: 14, alignItems: "flex-start" }}>
+                                                    <div style={{ width: 36, height: 36, borderRadius: 10, background: `${item.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: item.color, flexShrink: 0, marginTop: 2 }}>
+                                                        {item.icon}
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ fontWeight: 600, fontSize: 14, color: "#f0f4ff", marginBottom: 4 }}>{item.title}</div>
+                                                        <div style={{ fontSize: 12, color: "rgba(240,244,255,0.4)", lineHeight: 1.6 }}>{item.desc}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Community Values */}
+                                    <div>
+                                        <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 16, fontWeight: 700, color: "#f0f4ff", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                                            <Heart size={16} color="#ef4444" /> Our Values
+                                        </h3>
+                                        <div className="glass-card" style={{ padding: "24px 28px" }}>
+                                            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                                                {[
+                                                    { icon: <Globe size={16} />, title: "Hyper-Local Focus", desc: "We believe the strongest tech communities are rooted in local connections. Meet people you can grab coffee with.", color: "#3b82f6" },
+                                                    { icon: <Shield size={16} />, title: "Inclusive & Safe", desc: "Zero tolerance for toxicity. We welcome developers of all experience levels, backgrounds, and tech stacks.", color: "#10b981" },
+                                                    { icon: <Code2 size={16} />, title: "Open Source First", desc: "DevCircle itself is open source. We practice what we preach — transparency and collaboration.", color: "#f97316" },
+                                                    { icon: <Coffee size={16} />, title: "Free Forever", desc: "No premium tiers, no paywalls. DevCircle is and will always be free for every developer.", color: "#f59e0b" },
+                                                ].map((value) => (
+                                                    <div key={value.title} style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
+                                                        <div style={{ width: 32, height: 32, borderRadius: 8, background: `${value.color}10`, display: "flex", alignItems: "center", justifyContent: "center", color: value.color, flexShrink: 0, marginTop: 1 }}>
+                                                            {value.icon}
+                                                        </div>
+                                                        <div>
+                                                            <div style={{ fontWeight: 600, fontSize: 14, color: "#f0f4ff", marginBottom: 3 }}>{value.title}</div>
+                                                            <div style={{ fontSize: 13, color: "rgba(240,244,255,0.4)", lineHeight: 1.65 }}>{value.desc}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Quick Links / Get Involved */}
+                                    <div>
+                                        <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 16, fontWeight: 700, color: "#f0f4ff", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                                            <Rocket size={16} color="#8b5cf6" /> Get Involved
+                                        </h3>
+                                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }} className="about-offer-grid">
+                                            {[
+                                                { href: `/communities/${cityData.id}?tab=discussions`, label: "Start a Discussion", desc: "Share your thoughts", icon: <MessageSquare size={15} />, color: "#8b5cf6" },
+                                                { href: "/events/new", label: "Propose an Event", desc: "Host a local meetup", icon: <Calendar size={15} />, color: "#3b82f6" },
+                                                { href: "/projects/new", label: "Submit a Project", desc: "Find collaborators", icon: <Code2 size={15} />, color: "#f97316" },
+                                                { href: "/open-source", label: "Contribute to DevCircle", desc: "Improve the platform", icon: <Star size={15} />, color: "#f59e0b" },
+                                            ].map((action) => (
+                                                <Link key={action.label} href={action.href} style={{ textDecoration: "none" }}>
+                                                    <div className="glass-card about-action-card" style={{ padding: "18px 20px", display: "flex", alignItems: "center", gap: 14, transition: "all 0.2s" }}>
+                                                        <div style={{ width: 36, height: 36, borderRadius: 10, background: `${action.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: action.color, flexShrink: 0 }}>
+                                                            {action.icon}
+                                                        </div>
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ fontWeight: 600, fontSize: 13, color: "#f0f4ff", marginBottom: 2 }}>{action.label}</div>
+                                                            <div style={{ fontSize: 11, color: "rgba(240,244,255,0.35)" }}>{action.desc}</div>
+                                                        </div>
+                                                        <ArrowRight size={14} style={{ color: "rgba(240,244,255,0.2)" }} />
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                </div>
                             )}
                         </div>
 
@@ -459,6 +597,14 @@ export default async function CityPage({ params, searchParams }: { params: Promi
 
             <style>{`
         @media (max-width: 900px) { .city-layout { grid-template-columns: 1fr !important; } }
+        @media (max-width: 600px) {
+          .about-stats-grid { grid-template-columns: 1fr !important; }
+          .about-offer-grid { grid-template-columns: 1fr !important; }
+        }
+        .about-action-card:hover {
+          border-color: rgba(249,115,22,0.2) !important;
+          transform: translateX(2px);
+        }
       `}</style>
         </>
     );
