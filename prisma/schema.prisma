@@ -1,0 +1,282 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User & Auth
+model User {
+  id          String   @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("MEMBER") // MEMBER, MODERATOR, ADMIN
+  reputation    Int       @default(0) // Used for auto-moderation 
+  
+  // Profile info
+  bio           String?
+  cityId        String?
+  company       String?
+  jobTitle      String?
+  yearsOfExp    Int?
+  experienceLevel String?
+  skills        String?   // comma-separated
+  interests     String?   // comma-separated
+  github        String?
+  linkedin      String?
+  portfolioUrl  String?
+  openToMentoring Boolean @default(false)
+  openToCollaborate Boolean @default(false)
+  
+  // Relations
+  city          City?     @relation(fields: [cityId], references: [id])
+  posts         Post[]
+  projects      Project[]
+  events        Event[]   @relation("EventOrganizer")
+  rsvps         Rsvp[]
+  comments      Comment[]
+  upvotes       Upvote[]
+  jobs          Job[]
+  polls         Poll[]
+  pollVotes     PollVote[]
+  
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                 String  @id @default(uuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  
+  access_token       String?  
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Communities
+model City {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  state       String
+  tier        String   // Tier-1, Tier-2, Tier-3
+  tags        String   // comma-separated
+  isActive    Boolean  @default(false)
+  image       String?
+  
+  // Relations
+  members     User[]
+  posts       Post[]
+  projects    Project[]
+  events      Event[]
+  jobs        Job[]
+  polls       Poll[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Discussions Forum
+model Post {
+  id          String    @id @default(uuid())
+  title       String
+  content     String
+  preview     String?
+  category    String    // AI/ML, Cloud, Web Dev, etc.
+  postType    String    @default("Discussion") // Discussion, Blog, Tutorial, Resource
+  tags        String?   // comma-separated
+  isPinned    Boolean   @default(false)
+  
+  // Relations
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  cityId      String
+  city        City      @relation(fields: [cityId], references: [id])
+  comments    Comment[]
+  upvotes     Upvote[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  content     String
+  
+  // Relations
+  postId      String
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Upvote {
+  id          String   @id @default(uuid())
+  
+  // Relations
+  postId      String
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+
+  @@unique([postId, userId])
+}
+
+// Project Marketplace
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  type        String   // Open Source, Startup, Research
+  status      String   // Active, Recruiting, Ideation
+  techStack   String   // comma-separated
+  lookingFor  String   // comma-separated roles
+  teamSize    Int      @default(1)
+  
+  // Relations
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  cityId      String
+  city        City     @relation(fields: [cityId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Events & Meetups
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  type        String   // Hack Night, Workshop, Talk, Panel
+  date        DateTime
+  time        String
+  venue       String
+  capacity    Int
+  fee         String   @default("Free")
+  
+  // Relations
+  organizerId String
+  organizer   User     @relation("EventOrganizer", fields: [organizerId], references: [id])
+  cityId      String
+  city        City     @relation(fields: [cityId], references: [id])
+  rsvps       Rsvp[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Rsvp {
+  id          String   @id @default(uuid())
+  
+  // Relations
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+
+  @@unique([eventId, userId])
+}
+
+// Job & Opportunity Board
+model Job {
+  id          String   @id @default(uuid())
+  title       String
+  company     String
+  description String
+  type        String   // Full-time, Internship, Freelance, Contract
+  techStack   String   // comma-separated
+  experience  String   // Fresher, Junior, Mid-Level, Senior
+  applyUrl    String?
+  salary      String?  // e.g. "₹8–12 LPA" or "Negotiable"
+  isRemote    Boolean  @default(false)
+
+  // Relations
+  posterId    String
+  poster      User     @relation(fields: [posterId], references: [id])
+  cityId      String
+  city        City     @relation(fields: [cityId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Community Polls
+model Poll {
+  id          String       @id @default(uuid())
+  question    String
+  description String?
+  endsAt      DateTime?
+
+  // Relations
+  authorId    String
+  author      User         @relation(fields: [authorId], references: [id])
+  cityId      String
+  city        City         @relation(fields: [cityId], references: [id])
+  options     PollOption[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PollOption {
+  id      String     @id @default(uuid())
+  text    String
+  pollId  String
+  poll    Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes   PollVote[]
+}
+
+model PollVote {
+  id           String     @id @default(uuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pollOptionId String
+  pollOption   PollOption @relation(fields: [pollOptionId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, pollOptionId])
+}
