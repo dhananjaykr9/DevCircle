@@ -34,7 +34,7 @@ export default async function MentorshipPage() {
                 <div style={{ position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "#8b5cf6", filter: "blur(120px)", opacity: 0.1, top: -100, left: -50, zIndex: 0, pointerEvents: "none" }} />
                 <div className="container" style={{ position: "relative", zIndex: 2, display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 30 }}>
                     <div style={{ maxWidth: 600 }}>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.2)", marginBottom: 16, color: "#a78bfa", fontSize: 13, fontWeight: 600 }}>
+                        <div className="fade-in-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.2)", marginBottom: 16, color: "#a78bfa", fontSize: 13, fontWeight: 600 }}>
                             <GraduationCap size={14} /> Knowledge Exchange
                         </div>
                         <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(28px, 4vw, 46px)", fontWeight: 800, letterSpacing: "-1px", color: "#f0f4ff", marginBottom: 12 }}>
@@ -77,7 +77,7 @@ export default async function MentorshipPage() {
                     <div style={{ display: "flex", gap: 10, marginBottom: 32, flexWrap: "wrap", alignItems: "center" }}>
                         <div style={{ position: "relative", flex: 1, minWidth: 200 }}>
                             <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.3)" }} />
-                            <input className="input" placeholder="Search mentors by tech stack, role, or company..." style={{ paddingLeft: 38 }} />
+                            <input className="input" placeholder="Search mentors by tech stack, role, or company..." style={{ paddingLeft: 38 }} suppressHydrationWarning />
                         </div>
                         <select className="input" style={{ minWidth: 160 }}>
                             <option value="">Any Experience</option>

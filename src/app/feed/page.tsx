@@ -107,12 +107,25 @@ export default async function DashboardFeedPage() {
 
                     {/* Main Content Feed */}
                     <div style={{ display: "flex", flexDirection: "column", gap: 24, paddingBottom: 40 }}>
-                        <div className="glass-card" style={{ padding: "24px", background: "linear-gradient(135deg, rgba(8,145,178,0.1), rgba(59,130,246,0.1))", border: "1px solid rgba(59,130,246,0.2)" }}>
+                        <div className="glass-card fade-in-up" style={{ padding: "28px", background: "linear-gradient(135deg, rgba(8,145,178,0.1), rgba(59,130,246,0.1))", border: "1px solid rgba(59,130,246,0.2)" }}>
                             <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 10px", borderRadius: 100, background: "rgba(59,130,246,0.2)", color: "#93c5fd", fontSize: 11, fontWeight: 700, marginBottom: 12 }}>
                                 <Sparkles size={12} /> AI Personalized Feed
                             </div>
                             <h2 style={{ fontSize: 24, fontWeight: 700, color: "#f0f4ff", margin: "0 0 8px 0" }}>Welcome back, {user.name?.split(' ')[0]}</h2>
-                            <p style={{ fontSize: 14, color: "rgba(240,244,255,0.6)", margin: 0 }}>Discover discussions, projects, and events curated specifically for your {mySkills.length > 0 ? "tech stack" : "interests"}.</p>
+                            <p style={{ fontSize: 14, color: "rgba(240,244,255,0.6)", margin: "0 0 20px 0" }}>Discover discussions, projects, and events curated specifically for your {mySkills.length > 0 ? "tech stack" : "interests"}.</p>
+
+                            {/* Quick Actions */}
+                            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                                <Link href="/discussions/new" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 10, background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.25)", color: "#93c5fd", fontSize: 13, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }}>
+                                    <MessageSquare size={14} /> Start Discussion
+                                </Link>
+                                <Link href="/projects/new" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 10, background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", color: "#6ee7b7", fontSize: 13, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }}>
+                                    <Code2 size={14} /> Post Project
+                                </Link>
+                                <Link href="/events/new" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 10, background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", color: "#fcd34d", fontSize: 13, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }}>
+                                    <Calendar size={14} /> Host Event
+                                </Link>
+                            </div>
                         </div>
 
                         <div>

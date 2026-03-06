@@ -56,7 +56,7 @@ export default async function StartupsHubPage({ searchParams }: { searchParams: 
             <section style={{ padding: "64px 0 48px", background: "rgba(13,17,32,0.5)", borderBottom: "1px solid rgba(255,255,255,0.05)" }} className="grid-bg">
                 <div style={{ position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "#f59e0b", filter: "blur(120px)", WebkitFilter: "blur(120px)", opacity: 0.1, top: -100, left: -50, zIndex: 0, pointerEvents: "none" }} />
                 <div className="container" style={{ position: "relative", zIndex: 2 }}>
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", marginBottom: 16, color: "#f59e0b", fontSize: 13, fontWeight: 600 }}>
+                    <div className="fade-in-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", marginBottom: 16, color: "#f59e0b", fontSize: 13, fontWeight: 600 }}>
                         <Rocket size={14} /> Founder Matching
                     </div>
                     <h1
@@ -118,7 +118,7 @@ export default async function StartupsHubPage({ searchParams }: { searchParams: 
                     <div style={{ display: "flex", gap: 10, marginBottom: 32, flexWrap: "wrap" }}>
                         <form action="/startups" method="get" style={{ position: "relative", flex: 1, minWidth: 200 }}>
                             <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.3)" }} />
-                            <input className="input" name="q" defaultValue={searchQuery} placeholder="Search startups by tech stack or role..." style={{ paddingLeft: 38 }} />
+                            <input className="input" name="q" defaultValue={searchQuery} placeholder="Search startups by tech stack or role..." style={{ paddingLeft: 38 }} suppressHydrationWarning />
                         </form>
                     </div>
 

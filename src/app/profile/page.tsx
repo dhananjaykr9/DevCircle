@@ -52,7 +52,7 @@ export default async function ProfilePage() {
 
     return (
         <>
-            <section className="section" style={{ paddingTop: 48 }}>
+            <section className="section fade-in-up" style={{ paddingTop: 48 }}>
                 <div className="container">
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 32 }} className="profile-layout">
 

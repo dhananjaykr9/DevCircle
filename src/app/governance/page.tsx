@@ -32,7 +32,7 @@ export default async function GovernancePage() {
 
                 <div className="container" style={{ position: "relative", zIndex: 2, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 30 }}>
                     <div style={{ maxWidth: 600 }}>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.2)", marginBottom: 20, color: "#818cf8", fontSize: 13, fontWeight: 600 }}>
+                        <div className="fade-in-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.2)", marginBottom: 20, color: "#818cf8", fontSize: 13, fontWeight: 600 }}>
                             <Landmark size={14} /> Community Governance
                         </div>
                         <h1 style={{ fontSize: 42, fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", margin: "0 0 16px 0", letterSpacing: "-1px" }}>

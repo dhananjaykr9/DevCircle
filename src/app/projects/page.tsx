@@ -68,7 +68,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
             <section style={{ padding: "64px 0 48px", background: "rgba(13,17,32,0.5)" }} className="grid-bg">
                 <div style={{ position: "absolute", width: 350, height: 350, borderRadius: "50%", background: "#10b981", filter: "blur(100px)", WebkitFilter: "blur(100px)", opacity: 0.1, top: -100, right: -50, zIndex: 0, pointerEvents: "none" }} />
                 <div className="container" style={{ position: "relative", zIndex: 2 }}>
-                    <span className="tag tag-green" style={{ marginBottom: 14, display: "inline-flex" }}>Collaboration</span>
+                    <span className="tag tag-green fade-in-up" style={{ marginBottom: 14, display: "inline-flex" }}>Collaboration</span>
                     <h1
                         style={{
                             fontFamily: "'Space Grotesk', sans-serif",
@@ -146,7 +146,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                     </div>
 
                     {/* Project cards */}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }} className="projects-grid">
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }} className="projects-grid stagger">
                         {projects.map((p) => (
                             <ProjectCard key={p.id} project={p as any} />
                         ))}

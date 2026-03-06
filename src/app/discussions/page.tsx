@@ -110,7 +110,7 @@ export default async function DiscussionsPage({ searchParams }: { searchParams: 
             >
                 <div style={{ position: "absolute", width: 350, height: 350, borderRadius: "50%", background: "#3b82f6", filter: "blur(100px)", WebkitFilter: "blur(100px)", opacity: 0.1, top: -100, right: -50, zIndex: 0, pointerEvents: "none" }} />
                 <div className="container" style={{ position: "relative", zIndex: 2 }}>
-                    <span className="tag tag-blue" style={{ marginBottom: 14, display: "inline-flex" }}>Technical Forums</span>
+                    <span className="tag tag-blue fade-in-up" style={{ marginBottom: 14, display: "inline-flex" }}>Technical Forums</span>
                     <h1
                         style={{
                             fontFamily: "'Space Grotesk', sans-serif",
@@ -217,7 +217,7 @@ export default async function DiscussionsPage({ searchParams }: { searchParams: 
                                 {currentSort !== "latest" && <input type="hidden" name="sort" value={currentSort} />}
                                 <div style={{ position: "relative", flex: 1 }}>
                                     <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.3)" }} />
-                                    <input className="input" name="q" defaultValue={searchQuery} placeholder="Search discussions..." style={{ paddingLeft: 38 }} />
+                                    <input className="input" name="q" defaultValue={searchQuery} placeholder="Search discussions..." style={{ paddingLeft: 38 }} suppressHydrationWarning />
                                 </div>
                                 <button type="submit" className="btn-secondary" style={{ padding: "10px 16px", borderRadius: 10, display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
                                     <Search size={14} /> Search

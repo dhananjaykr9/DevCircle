@@ -74,44 +74,55 @@ const Orb = ({ color, size, top, left, right, bottom, delay = "0s" }: {
   />
 );
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   // Fetch real data from Prisma
-  const activeCities = await prisma.city.findMany({
-    where: { isActive: true },
-    take: 6,
-    include: {
-      _count: {
-        select: { members: true, posts: true, events: true }
-      }
-    }
-  });
+  let activeCities: any[] = [];
+  let topDiscussions: any[] = [];
+  let upcomingEvents: any[] = [];
+  let totalCities = 0, totalMembers = 0, totalDiscussions = 0, totalEvents = 0;
 
-  const topDiscussions = await prisma.post.findMany({
-    take: 3,
-    orderBy: { createdAt: 'desc' },
-    include: {
-      author: true,
-      _count: {
-        select: { comments: true, upvotes: true }
+  try {
+    activeCities = await prisma.city.findMany({
+      where: { isActive: true },
+      take: 6,
+      include: {
+        _count: {
+          select: { members: true, posts: true, events: true }
+        }
       }
-    }
-  });
+    });
 
-  const upcomingEvents = await prisma.event.findMany({
-    take: 3,
-    orderBy: { date: 'asc' },
-    include: {
-      city: true,
-      _count: {
-        select: { rsvps: true }
+    topDiscussions = await prisma.post.findMany({
+      take: 3,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        author: true,
+        _count: {
+          select: { comments: true, upvotes: true }
+        }
       }
-    }
-  });
+    });
 
-  const totalCities = await prisma.city.count({ where: { isActive: true } });
-  const totalMembers = await prisma.user.count();
-  const totalDiscussions = await prisma.post.count();
-  const totalEvents = await prisma.event.count();
+    upcomingEvents = await prisma.event.findMany({
+      take: 3,
+      orderBy: { date: 'asc' },
+      include: {
+        city: true,
+        _count: {
+          select: { rsvps: true }
+        }
+      }
+    });
+
+    totalCities = await prisma.city.count({ where: { isActive: true } });
+    totalMembers = await prisma.user.count();
+    totalDiscussions = await prisma.post.count();
+    totalEvents = await prisma.event.count();
+  } catch {
+    // Database not available during build — use defaults
+  }
 
   const realStats = [
     { label: "Cities Active", value: totalCities.toString(), color: "#f97316" },

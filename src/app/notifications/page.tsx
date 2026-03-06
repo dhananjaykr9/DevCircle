@@ -35,14 +35,19 @@ export default async function NotificationsPage() {
     return (
         <main style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
 
-            <section style={{ padding: "40px 0 24px", borderBottom: "1px solid rgba(255,255,255,0.05)" }} className="grid-bg">
+            <section className="page-header grid-bg">
                 <div className="container" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                    <div>
+                    <div className="fade-in-up">
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                            <div style={{ width: 42, height: 42, borderRadius: 14, background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <Bell size={20} color="#3b82f6" />
+                            </div>
+                        </div>
                         <h1 style={{ fontSize: 32, fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-1px", margin: "0 0 8px 0" }}>
                             Notifications
                         </h1>
                         <p style={{ color: "rgba(240,244,255,0.5)", fontSize: 14, margin: 0 }}>
-                            You have {unreadCount} unread alerts.
+                            {unreadCount > 0 ? `You have ${unreadCount} unread alert${unreadCount > 1 ? 's' : ''}.` : 'All caught up!'}
                         </p>
                     </div>
                     {unreadCount > 0 && (
@@ -80,7 +85,7 @@ export default async function NotificationsPage() {
                                     <p style={{ fontSize: 14, color: notif.isRead ? "rgba(240,244,255,0.7)" : "#f0f4ff", margin: "0 0 4px 0", lineHeight: 1.5 }}>
                                         {notif.content}
                                     </p>
-                                    <span style={{ fontSize: 11, color: "rgba(240,244,255,0.4)" }}>
+                                    <span style={{ fontSize: 11, color: "rgba(240,244,255,0.4)" }} suppressHydrationWarning>
                                         {notif.createdAt.toLocaleDateString()} at {notif.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </span>
                                 </div>

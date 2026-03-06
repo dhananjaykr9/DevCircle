@@ -82,14 +82,16 @@ export default async function NetworkPage({
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
 
             {/* Header */}
-            <header className="hero-gradient" style={{ padding: "60px 0 40px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+            <header className="hero-gradient grid-bg" style={{ padding: "60px 0 40px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                 <div className="container">
+                    <div className="fade-in-up">
                     <h1 style={{ fontSize: 36, fontWeight: 800, color: "#f0f4ff", marginBottom: 12, fontFamily: "'Space Grotesk', sans-serif" }}>
                         Developer Network
                     </h1>
                     <p style={{ fontSize: 16, color: "rgba(240,244,255,0.6)", maxWidth: 600, lineHeight: 1.6 }}>
                         Discover and connect with professionals and freshers across the ecosystem. Find mentors, team up for projects, and build your local tech network.
                     </p>
+                    </div>
                 </div>
             </header>
 
@@ -119,6 +121,7 @@ export default async function NetworkPage({
                                             placeholder="e.g. React, Python, John..."
                                             className="input"
                                             style={{ paddingLeft: 36, fontSize: 14 }}
+                                            suppressHydrationWarning
                                         />
                                     </div>
                                 </div>

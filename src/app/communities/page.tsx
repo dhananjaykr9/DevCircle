@@ -45,7 +45,7 @@ export default async function CommunitiesPage({ searchParams }: { searchParams: 
             >
                 <div style={{ position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "#8b5cf6", filter: "blur(100px)", WebkitFilter: "blur(100px)", opacity: 0.12, top: -100, right: -100, zIndex: 0, pointerEvents: "none" }} />
                 <div className="container" style={{ position: "relative", zIndex: 2 }}>
-                    <span className="tag tag-purple" style={{ marginBottom: 16, display: "inline-flex" }}>All Communities</span>
+                    <span className="tag tag-purple fade-in-up" style={{ marginBottom: 16, display: "inline-flex" }}>All Communities</span>
                     <h1
                         style={{
                             fontFamily: "'Space Grotesk', sans-serif",
@@ -81,6 +81,7 @@ export default async function CommunitiesPage({ searchParams }: { searchParams: 
                             placeholder="Search a city..."
                             className="input"
                             style={{ paddingLeft: 40, height: 46 }}
+                            suppressHydrationWarning
                         />
                     </form>
                 </div>

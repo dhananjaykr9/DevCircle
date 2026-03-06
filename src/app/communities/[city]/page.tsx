@@ -4,8 +4,12 @@ import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";
 
 export async function generateStaticParams() {
-    const cities = await prisma.city.findMany({ select: { id: true } });
-    return cities.map((c) => ({ city: c.id }));
+    try {
+        const cities = await prisma.city.findMany({ select: { id: true } });
+        return cities.map((c) => ({ city: c.id }));
+    } catch {
+        return [];
+    }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ city: string }> }) {

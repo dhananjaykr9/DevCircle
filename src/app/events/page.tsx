@@ -78,7 +78,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
             <section style={{ padding: "64px 0 48px", background: "rgba(13,17,32,0.5)" }} className="grid-bg">
                 <div style={{ position: "absolute", width: 350, height: 350, borderRadius: "50%", background: "#f59e0b", filter: "blur(100px)", WebkitFilter: "blur(100px)", opacity: 0.1, top: -100, right: -50, zIndex: 0, pointerEvents: "none" }} />
                 <div className="container" style={{ position: "relative", zIndex: 2 }}>
-                    <span className="tag" style={{ marginBottom: 14, display: "inline-flex", background: "rgba(245,158,11,0.12)", color: "#fbbf24", borderColor: "rgba(245,158,11,0.25)" }}>
+                    <span className="tag fade-in-up" style={{ marginBottom: 14, display: "inline-flex", background: "rgba(245,158,11,0.12)", color: "#fbbf24", borderColor: "rgba(245,158,11,0.25)" }}>
                         Local Events
                     </span>
                     <h1
@@ -110,7 +110,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
                                 <form action="/events" method="get" style={{ position: "relative", flex: 1, minWidth: 180 }}>
                                     {selectedCity && <input type="hidden" name="city" value={selectedCity} />}
                                     <Search size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.3)" }} />
-                                    <input className="input" name="q" defaultValue={searchQuery} placeholder="Search events..." style={{ paddingLeft: 36 }} />
+                                    <input className="input" name="q" defaultValue={searchQuery} placeholder="Search events..." style={{ paddingLeft: 36 }} suppressHydrationWarning />
                                 </form>
                                 <Link
                                     href={buildUrl({ city: "" })}
@@ -143,7 +143,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
                                 ))}
                             </div>
 
-                            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 16 }} className="stagger">
                                 {events.map((ev) => (
                                     <div key={ev.id} className="glass-card" style={{ padding: 26, display: "flex", gap: 24 }} >
                                         {/* Date block */}

@@ -9,10 +9,11 @@ export const metadata = {
     title: "Learning Hub — DevCircle",
 };
 
-export default async function LearningHubPage({ searchParams }: { searchParams: { category?: string; tag?: string } }) {
+export default async function LearningHubPage({ searchParams }: { searchParams: Promise<{ category?: string; tag?: string }> }) {
     const session = await auth();
-    const activeCategory = searchParams.category || "All";
-    const activeTag = searchParams.tag || "";
+    const params = await searchParams;
+    const activeCategory = params.category || "All";
+    const activeTag = params.tag || "";
 
     const whereClause: any = {};
     if (activeCategory !== "All") whereClause.category = activeCategory;
@@ -46,7 +47,7 @@ export default async function LearningHubPage({ searchParams }: { searchParams: 
             <section style={{ padding: "60px 0 40px", background: "rgba(13,17,32,0.5)", borderBottom: "1px solid rgba(255,255,255,0.05)" }} className="grid-bg">
                 <div className="container" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 30 }}>
                     <div style={{ maxWidth: 600 }}>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", marginBottom: 16, color: "#10b981", fontSize: 13, fontWeight: 600 }}>
+                        <div className="fade-in-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", marginBottom: 16, color: "#10b981", fontSize: 13, fontWeight: 600 }}>
                             <BookOpen size={14} /> Learning Resources
                         </div>
                         <h1 style={{ fontSize: 36, fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", margin: "0 0 12px 0", letterSpacing: "-1px" }}>

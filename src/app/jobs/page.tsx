@@ -19,12 +19,13 @@ const typeColors: Record<string, { bg: string; color: string; border: string }> 
 export default async function JobsPage({
     searchParams,
 }: {
-    searchParams: { type?: string; q?: string; remote?: string };
+    searchParams: Promise<{ type?: string; q?: string; remote?: string }>;
 }) {
     const session = await auth();
-    const typeFilter = searchParams.type || "";
-    const query = searchParams.q || "";
-    const remoteOnly = searchParams.remote === "true";
+    const params = await searchParams;
+    const typeFilter = params.type || "";
+    const query = params.q || "";
+    const remoteOnly = params.remote === "true";
 
     const where: any = {};
     if (typeFilter) where.type = typeFilter;
@@ -84,7 +85,7 @@ export default async function JobsPage({
                             <form style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
                                 <div style={{ position: "relative", flex: 1, minWidth: 200 }}>
                                     <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.35)" }} />
-                                    <input name="q" defaultValue={query} className="input" placeholder="Search job title, company, tech..." style={{ paddingLeft: 38 }} />
+                                    <input name="q" defaultValue={query} className="input" placeholder="Search job title, company, tech..." style={{ paddingLeft: 38 }} suppressHydrationWarning />
                                 </div>
                                 <select name="type" defaultValue={typeFilter} className="input" style={{ minWidth: 140 }}>
                                     <option value="">All Types</option>

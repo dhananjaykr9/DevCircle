@@ -45,7 +45,7 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
 
                 <div className="container" style={{ position: "relative", zIndex: 2, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 30 }}>
                     <div style={{ maxWidth: 600 }}>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", marginBottom: 20, color: "#10b981", fontSize: 13, fontWeight: 600 }}>
+                        <div className="fade-in-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", marginBottom: 20, color: "#10b981", fontSize: 13, fontWeight: 600 }}>
                             <Github size={14} /> Official Hub
                         </div>
                         <h1 style={{ fontSize: 42, fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", margin: "0 0 16px 0", letterSpacing: "-1px" }}>
@@ -68,7 +68,7 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
                 <div className="container" style={{ maxWidth: 1000 }}>
                     <form action="/open-source" method="get" style={{ position: "relative", maxWidth: 480 }}>
                         <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.3)" }} />
-                        <input className="input" name="q" defaultValue={searchQuery} placeholder="Search open source projects..." style={{ paddingLeft: 38 }} />
+                        <input className="input" name="q" defaultValue={searchQuery} placeholder="Search open source projects..." style={{ paddingLeft: 38 }} suppressHydrationWarning />
                     </form>
                 </div>
             </section>

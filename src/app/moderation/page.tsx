@@ -34,7 +34,7 @@ export default async function ModerationPage() {
             <section style={{ padding: "60px 0 40px", background: "rgba(13,17,32,0.5)", borderBottom: "1px solid rgba(255,255,255,0.05)" }} className="grid-bg">
                 <div className="container" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                     <div>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.2)", marginBottom: 16, color: "#f97316", fontSize: 13, fontWeight: 600 }}>
+                        <div className="fade-in-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 100, background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.2)", marginBottom: 16, color: "#f97316", fontSize: 13, fontWeight: 600 }}>
                             <Shield size={14} /> Mod Tools
                         </div>
                         <h1 style={{ fontSize: 36, fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", margin: "0 0 8px 0", letterSpacing: "-1px" }}>

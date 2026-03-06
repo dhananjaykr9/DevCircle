@@ -45,7 +45,7 @@ export default async function PollsPage() {
             <section style={{ padding: "64px 0 48px", background: "rgba(13,17,32,0.5)" }} className="grid-bg">
                 <div style={{ position: "absolute", width: 350, height: 350, borderRadius: "50%", background: "#10b981", filter: "blur(100px)", opacity: 0.08, top: -80, right: -60, zIndex: 0, pointerEvents: "none" }} />
                 <div className="container" style={{ position: "relative", zIndex: 2 }}>
-                    <span className="tag" style={{ marginBottom: 14, display: "inline-flex", background: "rgba(16,185,129,0.12)", color: "#34d399", borderColor: "rgba(16,185,129,0.25)" }}>Community Voice</span>
+                    <span className="tag fade-in-up" style={{ marginBottom: 14, display: "inline-flex", background: "rgba(16,185,129,0.12)", color: "#34d399", borderColor: "rgba(16,185,129,0.25)" }}>Community Voice</span>
                     <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(28px, 4vw, 46px)", fontWeight: 800, letterSpacing: "-1px", color: "#f0f4ff", marginBottom: 12 }}>
                         Community <span style={{ color: "#34d399" }}>Polls</span>
                     </h1>

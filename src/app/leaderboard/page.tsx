@@ -49,6 +49,36 @@ export default async function LeaderboardPage() {
             <section className="section" style={{ flex: 1, paddingTop: 0 }}>
                 <div className="container" style={{ maxWidth: 900 }}>
 
+                    {/* Podium Top 3 */}
+                    {topUsers.length >= 3 && (
+                        <div className="fade-in-up" style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", gap: 16, marginBottom: 48, padding: "0 20px" }}>
+                            {[topUsers[1], topUsers[0], topUsers[2]].map((u, i) => {
+                                const rank = i === 1 ? 1 : i === 0 ? 2 : 3;
+                                const colors = { 1: { bg: "rgba(251,191,36,0.12)", border: "#fbbf24", text: "#fbbf24" }, 2: { bg: "rgba(148,163,184,0.1)", border: "#94a3b8", text: "#94a3b8" }, 3: { bg: "rgba(180,83,9,0.1)", border: "#b45309", text: "#cd7c2e" } };
+                                const c = colors[rank as 1 | 2 | 3];
+                                const size = rank === 1 ? 80 : 64;
+                                const height = rank === 1 ? 200 : rank === 2 ? 170 : 150;
+                                return (
+                                    <Link key={u.id} href={`/members/${u.id}`} style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", width: rank === 1 ? 200 : 160 }}>
+                                        <div style={{ position: "relative", marginBottom: 12 }}>
+                                            {u.image ? (
+                                                <img src={u.image} alt={u.name || "User"} style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover", border: `3px solid ${c.border}`, boxShadow: `0 0 20px ${c.bg}` }} />
+                                            ) : (
+                                                <div style={{ width: size, height: size, borderRadius: "50%", background: "linear-gradient(135deg, #8b5cf6, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "bold", fontSize: rank === 1 ? 28 : 22, border: `3px solid ${c.border}`, boxShadow: `0 0 20px ${c.bg}` }}>
+                                                    {u.name?.charAt(0).toUpperCase() || "U"}
+                                                </div>
+                                            )}
+                                            <div style={{ position: "absolute", bottom: -6, left: "50%", transform: "translateX(-50%)", width: 24, height: 24, borderRadius: "50%", background: c.bg, border: `2px solid ${c.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: c.text }}>{rank}</div>
+                                        </div>
+                                        <div style={{ fontWeight: 700, fontSize: rank === 1 ? 16 : 14, color: "#f0f4ff", textAlign: "center", marginBottom: 4 }}>{u.name}</div>
+                                        <div style={{ fontSize: 20, fontWeight: 800, color: c.text, fontFamily: "'Space Grotesk', sans-serif" }}>{u.reputation}</div>
+                                        <div style={{ width: "100%", height: height - 100, marginTop: 12, borderRadius: "16px 16px 0 0", background: `linear-gradient(180deg, ${c.bg}, transparent)`, border: `1px solid ${c.border}`, borderBottom: "none", opacity: 0.5 }} />
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    )}
+
                     <div className="glass-card" style={{ padding: 0, overflow: "hidden" }}>
                         {topUsers.length === 0 ? (
                             <div style={{ padding: 60, textAlign: "center", color: "rgba(240,244,255,0.4)" }}>
