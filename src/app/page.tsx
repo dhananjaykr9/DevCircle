@@ -79,6 +79,7 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   // Fetch real data from Prisma
   let activeCities: any[] = [];
+  let waitlistCities: any[] = [];
   let topDiscussions: any[] = [];
   let upcomingEvents: any[] = [];
   let totalCities = 0, totalMembers = 0, totalDiscussions = 0, totalEvents = 0;
@@ -92,6 +93,13 @@ export default async function HomePage() {
           select: { members: true, posts: true, events: true }
         }
       }
+    });
+
+    waitlistCities = await prisma.city.findMany({
+      where: { isActive: false },
+      take: 8,
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, state: true, tier: true }
     });
 
     topDiscussions = await prisma.post.findMany({
@@ -117,6 +125,7 @@ export default async function HomePage() {
     });
 
     totalCities = await prisma.city.count({ where: { isActive: true } });
+    const totalWaitlistCities = await prisma.city.count({ where: { isActive: false } });
     totalMembers = await prisma.user.count();
     totalDiscussions = await prisma.post.count();
     totalEvents = await prisma.event.count();
@@ -125,7 +134,7 @@ export default async function HomePage() {
   }
 
   const realStats = [
-    { label: "Cities Active", value: totalCities.toString(), color: "#f97316" },
+    { label: "Live City", value: totalCities.toString(), color: "#f97316" },
     { label: "Registered Members", value: totalMembers.toString(), color: "#8b5cf6" },
     { label: "Discussions", value: totalDiscussions.toString(), color: "#3b82f6" },
     { label: "Events Hosted", value: totalEvents.toString(), color: "#10b981" },
@@ -179,7 +188,7 @@ export default async function HomePage() {
             }}
           >
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#f97316", display: "inline-block", boxShadow: "0 0 8px #f97316" }} />
-            Now live in {totalCities || "your"} Indian cities
+            Now live in Nagpur
           </div>
 
           <h1
@@ -306,6 +315,39 @@ export default async function HomePage() {
               </Link>
             ))}
           </div>
+
+          {/* Waitlist Cities */}
+          {waitlistCities.length > 0 && (
+            <div style={{ marginTop: 40 }}>
+              <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 6 }}>
+                Coming Soon
+              </h3>
+              <p style={{ fontSize: 13, color: "rgba(240,244,255,0.4)", marginBottom: 20 }}>
+                These cities are on the waitlist. Be the first to know when they launch!
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                {waitlistCities.map((city) => (
+                  <Link key={city.id} href={`/communities/${city.id}`} style={{ textDecoration: "none" }}>
+                    <div style={{
+                      padding: "10px 18px",
+                      borderRadius: 10,
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      transition: "all 0.2s",
+                      cursor: "pointer",
+                    }}>
+                      <MapPin size={12} color="rgba(240,244,255,0.3)" />
+                      <span style={{ fontSize: 13, color: "rgba(240,244,255,0.55)", fontWeight: 500 }}>{city.name}</span>
+                      <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 4, background: "rgba(139,92,246,0.12)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.2)" }}>Waitlist</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         <style>{`
           @media (max-width: 900px) { .cities-grid { grid-template-columns: repeat(2, 1fr) !important; } }
@@ -411,7 +453,7 @@ export default async function HomePage() {
             Join <span className="gradient-text">DevCircle</span><br />in your city today
           </h2>
           <p style={{ fontSize: 18, color: "rgba(240,244,255,0.5)", maxWidth: 480, margin: "0 auto 36px", lineHeight: 1.7 }}>
-            Connect with the brightest engineers in Nagpur, Pune, Hyderabad, and beyond. Your local tech career starts here.
+            DevCircle is live in Nagpur! More cities coming soon. Connect with engineers, freshers, and builders in your city.
           </p>
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/auth/signup" className="btn-primary" style={{ fontSize: 16, padding: "14px 36px" }}>Join DevCircle <ArrowRight size={16} /></Link>

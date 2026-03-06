@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { votePoll } from "@/lib/actions/jobs-polls";
+import { useRouter } from "next/navigation";
 
 interface Option {
     id: string;
@@ -24,9 +25,12 @@ export default function PollVoteButton({ pollId, options, userVotedOptionId, tot
     );
     const [localTotal, setLocalTotal] = useState(totalVotes);
     const [isPending, startTransition] = useTransition();
+    const [authError, setAuthError] = useState(false);
+    const router = useRouter();
 
     const handleVote = (optionId: string) => {
         if (isPending || isExpired) return;
+        setAuthError(false);
 
         // Optimistic update
         setLocalCounts((prev) => {
@@ -41,7 +45,7 @@ export default function PollVoteButton({ pollId, options, userVotedOptionId, tot
         startTransition(async () => {
             try {
                 await votePoll(optionId);
-            } catch {
+            } catch (e: any) {
                 // revert
                 setLocalCounts((prev) => {
                     const next = { ...prev };
@@ -51,6 +55,10 @@ export default function PollVoteButton({ pollId, options, userVotedOptionId, tot
                 });
                 setLocalTotal((prev) => (selectedId ? prev : Math.max(0, prev - 1)));
                 setSelectedId(userVotedOptionId);
+                if (e?.message?.toLowerCase().includes("logged in")) {
+                    setAuthError(true);
+                    setTimeout(() => setAuthError(false), 4000);
+                }
             }
         });
     };
@@ -110,6 +118,15 @@ export default function PollVoteButton({ pollId, options, userVotedOptionId, tot
             <div style={{ fontSize: 12, color: "rgba(240,244,255,0.35)", marginTop: 4 }}>
                 {localTotal} vote{localTotal !== 1 ? "s" : ""}{isExpired ? " · Poll closed" : hasVoted ? " · Click another option to change your vote" : " · Click an option to vote"}
             </div>
+            {authError && (
+                <a
+                    href="/auth/login"
+                    onClick={(e) => { e.preventDefault(); router.push("/auth/login"); }}
+                    style={{ fontSize: 12, color: "#f97316", textDecoration: "underline", cursor: "pointer", marginTop: 4, display: "inline-block" }}
+                >
+                    Sign in to vote on polls
+                </a>
+            )}
         </div>
     );
 }

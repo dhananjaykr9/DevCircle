@@ -64,9 +64,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 token.id = user.id;
                 token.email = user.email;
                 token.onboarded = (user as any).onboarded;
+                token.role = (user as any).role;
             }
-            // Re-read onboarded status from DB when session is updated or on each sign-in
-            if (trigger === "update" || (token.id && !token.onboarded)) {
+            // Re-read user data from DB when session is updated or on sign-in
+            if (trigger === "update" || trigger === "signIn" || (token.id && !token.onboarded)) {
                 const dbUser = await prisma.user.findUnique({
                     where: { id: token.id as string },
                     select: { onboarded: true, cityId: true, role: true }

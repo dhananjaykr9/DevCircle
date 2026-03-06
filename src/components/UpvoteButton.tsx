@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { ChevronUp } from "lucide-react";
 import { toggleUpvote } from "@/lib/actions/create";
+import { useRouter } from "next/navigation";
 
 interface UpvoteButtonProps {
     postId: string;
@@ -14,8 +15,11 @@ export default function UpvoteButton({ postId, initialCount, initialUpvoted }: U
     const [upvoted, setUpvoted] = useState(initialUpvoted);
     const [count, setCount] = useState(initialCount);
     const [isPending, startTransition] = useTransition();
+    const [authError, setAuthError] = useState(false);
+    const router = useRouter();
 
     const handleClick = () => {
+        setAuthError(false);
         // Optimistic update
         setUpvoted((prev) => !prev);
         setCount((prev) => (upvoted ? prev - 1 : prev + 1));
@@ -23,10 +27,14 @@ export default function UpvoteButton({ postId, initialCount, initialUpvoted }: U
         startTransition(async () => {
             try {
                 await toggleUpvote(postId);
-            } catch {
+            } catch (e: any) {
                 // Revert on error
                 setUpvoted((prev) => !prev);
                 setCount((prev) => (upvoted ? prev + 1 : prev - 1));
+                if (e?.message?.toLowerCase().includes("logged in")) {
+                    setAuthError(true);
+                    setTimeout(() => setAuthError(false), 4000);
+                }
             }
         });
     };
@@ -65,6 +73,15 @@ export default function UpvoteButton({ postId, initialCount, initialUpvoted }: U
             >
                 {count}
             </span>
+            {authError && (
+                <a
+                    href="/auth/login"
+                    onClick={(e) => { e.preventDefault(); router.push("/auth/login"); }}
+                    style={{ fontSize: 10, color: "#f97316", textDecoration: "underline", cursor: "pointer", textAlign: "center", lineHeight: 1.3, marginTop: 2 }}
+                >
+                    Sign in to vote
+                </a>
+            )}
         </div>
     );
 }

@@ -251,9 +251,15 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
                                 <p style={{ fontSize: 13, color: "rgba(240,244,255,0.5)", marginBottom: 16, lineHeight: 1.65 }}>
                                     Organize a meetup, workshop, or hack night for your city&apos;s tech community.
                                 </p>
-                                <Link href="/events/new" className="btn-primary" style={{ display: "flex", width: "100%", justifyContent: "center", textDecoration: "none" }}>
-                                    Submit Event
-                                </Link>
+                                {session ? (
+                                    <Link href="/events/new" className="btn-primary" style={{ display: "flex", width: "100%", justifyContent: "center", textDecoration: "none" }}>
+                                        Submit Event
+                                    </Link>
+                                ) : (
+                                    <Link href="/auth/login" className="btn-secondary" style={{ display: "flex", width: "100%", justifyContent: "center", textDecoration: "none" }}>
+                                        Sign in to host events
+                                    </Link>
+                                )}
                             </div>
 
                             {/* Event types */}

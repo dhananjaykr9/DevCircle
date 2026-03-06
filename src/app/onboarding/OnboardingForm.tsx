@@ -55,7 +55,7 @@ export default function OnboardingForm({ cities }: { cities: any[] }) {
     const filteredCities = cities.filter(c =>
         c.name.toLowerCase().includes(citySearch.toLowerCase()) ||
         c.state.toLowerCase().includes(citySearch.toLowerCase())
-    );
+    ).sort((a: any, b: any) => (b.isActive ? 1 : 0) - (a.isActive ? 1 : 0));
 
     const filteredSkills = SKILL_OPTIONS.filter(s =>
         s.toLowerCase().includes(skillSearch.toLowerCase())
@@ -167,7 +167,9 @@ export default function OnboardingForm({ cities }: { cities: any[] }) {
                         />
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, maxHeight: 280, overflowY: "auto", paddingRight: 4 }}>
-                        {filteredCities.map(city => (
+                        {filteredCities.map(city => {
+                            const isActive = city.isActive;
+                            return (
                             <button
                                 key={city.id}
                                 type="button"
@@ -185,18 +187,27 @@ export default function OnboardingForm({ cities }: { cities: any[] }) {
                                     display: "flex",
                                     alignItems: "center",
                                     gap: 10,
+                                    position: "relative",
                                 }}
                             >
                                 <MapPin size={14} style={{ opacity: 0.5 }} />
-                                <div>
-                                    <div style={{ fontWeight: 600, fontSize: 14 }}>{city.name}</div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 6 }}>
+                                        {city.name}
+                                        {isActive ? (
+                                            <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 4, background: "rgba(16,185,129,0.12)", color: "#10b981", border: "1px solid rgba(16,185,129,0.2)" }}>Live</span>
+                                        ) : (
+                                            <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 4, background: "rgba(139,92,246,0.12)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.2)" }}>Waitlist</span>
+                                        )}
+                                    </div>
                                     <div style={{ fontSize: 11, color: "rgba(240,244,255,0.35)", marginTop: 2 }}>{city.state}</div>
                                 </div>
                                 {cityId === city.id && (
                                     <Check size={16} style={{ marginLeft: "auto", color: "#3b82f6" }} />
                                 )}
                             </button>
-                        ))}
+                            );
+                        })}
                     </div>
                     {filteredCities.length === 0 && (
                         <p style={{ textAlign: "center", color: "rgba(240,244,255,0.35)", fontSize: 13, padding: 20 }}>

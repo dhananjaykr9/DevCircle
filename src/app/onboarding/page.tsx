@@ -19,8 +19,7 @@ export default async function OnboardingPage() {
     }
 
     const cities = await prisma.city.findMany({
-        where: { isActive: true },
-        orderBy: { name: "asc" }
+        orderBy: [{ isActive: "desc" }, { name: "asc" }]
     });
 
     return (

@@ -126,9 +126,15 @@ export default async function DiscussionsPage({ searchParams }: { searchParams: 
                     <p style={{ fontSize: 16, color: "rgba(240,244,255,0.45)", maxWidth: 520, lineHeight: 1.7, marginBottom: 28 }}>
                         High-signal discussions bridging the gap between experienced professionals and early-career talent. Learn and mentor locally.
                     </p>
-                    <Link href="/discussions/new" className="btn-primary" style={{ display: "inline-flex" }}>
-                        <Plus size={16} /> New Discussion
-                    </Link>
+                    {session ? (
+                        <Link href="/discussions/new" className="btn-primary" style={{ display: "inline-flex" }}>
+                            <Plus size={16} /> New Discussion
+                        </Link>
+                    ) : (
+                        <Link href="/auth/login" className="btn-secondary" style={{ display: "inline-flex", textDecoration: "none" }}>
+                            Sign in to join discussions
+                        </Link>
+                    )}
                 </div>
             </section>
 

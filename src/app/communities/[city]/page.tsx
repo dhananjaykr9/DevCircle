@@ -14,10 +14,16 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ city: string }> }) {
     const { city } = await params;
-    const cityData = await prisma.city.findUnique({
+    let cityData = await prisma.city.findUnique({
         where: { id: city },
         include: { _count: { select: { members: true } } }
     });
+    if (!cityData) {
+        cityData = await prisma.city.findFirst({
+            where: { name: { equals: city, mode: 'insensitive' } },
+            include: { _count: { select: { members: true } } }
+        });
+    }
     return {
         title: `DevCircle ${cityData?.name || city} — Tech Community`,
         description: `Join the DevCircle ${cityData?.name} tech community. Connect with ${cityData?._count.members.toLocaleString() || 0} tech enthusiasts, join discussions, and attend local events.`,
@@ -31,38 +37,46 @@ export default async function CityPage({ params, searchParams }: { params: Promi
     const resolvedSearchParams = await searchParams;
     const currentTab = resolvedSearchParams.tab || "discussions";
 
-    const cityData = await prisma.city.findUnique({
+    let cityData = await prisma.city.findUnique({
         where: { id: city },
         include: {
             _count: { select: { members: true, posts: true, events: true } }
         }
     });
+    if (!cityData) {
+        cityData = await prisma.city.findFirst({
+            where: { name: { equals: city, mode: 'insensitive' } },
+            include: {
+                _count: { select: { members: true, posts: true, events: true } }
+            }
+        });
+    }
 
     if (!cityData) {
         return <div className="container" style={{ paddingTop: 120 }}>Community not found.</div>;
     }
 
     const cityDiscussions = await prisma.post.findMany({
-        where: { cityId: city },
+        where: { cityId: cityData.id },
         take: 4,
         orderBy: { createdAt: 'desc' },
         include: { author: true, _count: { select: { comments: true, upvotes: true } } }
     });
 
     const cityProjects = await prisma.project.findMany({
-        where: { cityId: city },
+        where: { cityId: cityData.id },
         take: 3,
         orderBy: { createdAt: 'desc' }
     });
 
     const cityEvents = await prisma.event.findMany({
-        where: { cityId: city },
+        where: { cityId: cityData.id },
         take: 3,
         orderBy: { date: 'asc' }
     });
 
     const cityMembers = await prisma.user.findMany({
-        where: { cityId: city },
+        where: { cityId: cityData.id },
         take: 5
     });
 
@@ -123,16 +137,31 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "rgba(240,244,255,0.45)" }}>
                                         <MapPin size={13} />
                                         {cityData.state} · {cityData.tier}
-                                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981", marginLeft: 4 }} />
-                                        <span style={{ color: "#10b981" }}>Active</span>
+                                        {cityData.isActive ? (
+                                            <>
+                                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981", marginLeft: 4 }} />
+                                                <span style={{ color: "#10b981" }}>Active</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#a78bfa", display: "inline-block", boxShadow: "0 0 6px #a78bfa", marginLeft: 4 }} />
+                                                <span style={{ color: "#a78bfa" }}>Waitlist</span>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <Link href={`/communities/${city}`} className="btn-primary">
-                            Join Community <ArrowRight size={15} />
-                        </Link>
+                        {cityData.isActive ? (
+                            <Link href={`/communities/${cityData.id}`} className="btn-primary">
+                                Join Community <ArrowRight size={15} />
+                            </Link>
+                        ) : (
+                            <button className="btn-secondary" style={{ cursor: "default", opacity: 0.8 }}>
+                                Join Waitlist
+                            </button>
+                        )}
                     </div>
 
                     {/* Stats */}
@@ -173,6 +202,26 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                 </div>
             </section>
 
+            {/* Waitlist banner for non-active cities */}
+            {!cityData.isActive && (
+                <div style={{ background: "linear-gradient(135deg, rgba(139,92,246,0.08), rgba(249,115,22,0.06))", borderBottom: "1px solid rgba(139,92,246,0.15)" }}>
+                    <div className="container" style={{ padding: "20px 0", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#a78bfa", boxShadow: "0 0 8px #a78bfa" }} />
+                            <div>
+                                <span style={{ fontWeight: 700, color: "#f0f4ff", fontSize: 14 }}>This community is on the waitlist</span>
+                                <p style={{ fontSize: 12, color: "rgba(240,244,255,0.45)", margin: "2px 0 0" }}>
+                                    DevCircle {cityData.name} is not yet live. Currently only <Link href="/communities/nagpur" style={{ color: "#f97316", textDecoration: "underline" }}>Nagpur</Link> is active.
+                                </p>
+                            </div>
+                        </div>
+                        <button className="btn-secondary" style={{ fontSize: 12, padding: "8px 18px", borderRadius: 8, cursor: "default" }}>
+                            Join Waitlist
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Tabs */}
             <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", background: "rgba(8,11,20,0.7)", position: "sticky", top: 68, zIndex: 50 }}>
                 <div className="container">
@@ -183,7 +232,7 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                             return (
                                 <Link
                                     key={tab}
-                                    href={`/communities/${city}?tab=${tabKey}`}
+                                    href={`/communities/${cityData.id}?tab=${tabKey}`}
                                     scroll={false}
                                     style={{
                                         padding: "14px 18px",

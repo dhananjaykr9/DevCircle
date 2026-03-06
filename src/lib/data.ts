@@ -1,15 +1,15 @@
 export const cities = [
     { id: 'nagpur', name: 'Nagpur', members: 1284, discussions: 347, events: 12, tier: 'Tier-2', tags: ['AI/ML', 'Cloud', 'Web Dev'], active: true, state: 'Maharashtra' },
-    { id: 'pune', name: 'Pune', members: 4821, discussions: 1209, events: 34, tier: 'Tier-1', tags: ['Fintech', 'DevOps', 'SaaS'], active: true, state: 'Maharashtra' },
-    { id: 'indore', name: 'Indore', members: 892, discussions: 213, events: 8, tier: 'Tier-2', tags: ['Startup', 'AI', 'Mobile'], active: true, state: 'Madhya Pradesh' },
-    { id: 'surat', name: 'Surat', members: 1102, discussions: 289, events: 15, tier: 'Tier-2', tags: ['Web Dev', 'E-commerce', 'Cloud'], active: true, state: 'Gujarat' },
-    { id: 'hyderabad', name: 'Hyderabad', members: 6540, discussions: 2104, events: 49, tier: 'Tier-1', tags: ['Data Science', 'Cloud', 'Cybersec'], active: true, state: 'Telangana' },
-    { id: 'bangalore', name: 'Bangalore', members: 11200, discussions: 4890, events: 87, tier: 'Tier-1', tags: ['AI', 'SaaS', 'DevOps', 'Startups'], active: true, state: 'Karnataka' },
+    { id: 'pune', name: 'Pune', members: 4821, discussions: 1209, events: 34, tier: 'Tier-1', tags: ['Fintech', 'DevOps', 'SaaS'], active: false, state: 'Maharashtra' },
+    { id: 'indore', name: 'Indore', members: 892, discussions: 213, events: 8, tier: 'Tier-2', tags: ['Startup', 'AI', 'Mobile'], active: false, state: 'Madhya Pradesh' },
+    { id: 'surat', name: 'Surat', members: 1102, discussions: 289, events: 15, tier: 'Tier-2', tags: ['Web Dev', 'E-commerce', 'Cloud'], active: false, state: 'Gujarat' },
+    { id: 'hyderabad', name: 'Hyderabad', members: 6540, discussions: 2104, events: 49, tier: 'Tier-1', tags: ['Data Science', 'Cloud', 'Cybersec'], active: false, state: 'Telangana' },
+    { id: 'bangalore', name: 'Bangalore', members: 11200, discussions: 4890, events: 87, tier: 'Tier-1', tags: ['AI', 'SaaS', 'DevOps', 'Startups'], active: false, state: 'Karnataka' },
     { id: 'jaipur', name: 'Jaipur', members: 743, discussions: 178, events: 7, tier: 'Tier-2', tags: ['Web Dev', 'EdTech', 'Mobile'], active: false, state: 'Rajasthan' },
     { id: 'bhopal', name: 'Bhopal', members: 512, discussions: 94, events: 4, tier: 'Tier-2', tags: ['AI', 'Cloud', 'Web Dev'], active: false, state: 'Madhya Pradesh' },
     { id: 'lucknow', name: 'Lucknow', members: 834, discussions: 196, events: 9, tier: 'Tier-2', tags: ['GovTech', 'Web Dev', 'Fintech'], active: false, state: 'Uttar Pradesh' },
-    { id: 'kochi', name: 'Kochi', members: 1456, discussions: 389, events: 18, tier: 'Tier-2', tags: ['IoT', 'Cloud', 'Blockchain'], active: true, state: 'Kerala' },
-    { id: 'ahmedabad', name: 'Ahmedabad', members: 2108, discussions: 567, events: 21, tier: 'Tier-1', tags: ['SaaS', 'HealthTech', 'AI'], active: true, state: 'Gujarat' },
+    { id: 'kochi', name: 'Kochi', members: 1456, discussions: 389, events: 18, tier: 'Tier-2', tags: ['IoT', 'Cloud', 'Blockchain'], active: false, state: 'Kerala' },
+    { id: 'ahmedabad', name: 'Ahmedabad', members: 2108, discussions: 567, events: 21, tier: 'Tier-1', tags: ['SaaS', 'HealthTech', 'AI'], active: false, state: 'Gujarat' },
     { id: 'chandigarh', name: 'Chandigarh', members: 678, discussions: 142, events: 6, tier: 'Tier-2', tags: ['Web Dev', 'AgriTech', 'DevOps'], active: false, state: 'Punjab' },
 ];
 

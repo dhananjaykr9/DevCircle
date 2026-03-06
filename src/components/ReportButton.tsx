@@ -8,15 +8,21 @@ export default function ReportButton({ targetType, targetId, targetUrl }: { targ
     const [open, setOpen] = useState(false);
     const [reason, setReason] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError("");
         try {
             await reportContent(targetType, targetId, reason, targetUrl);
             setSubmitted(true);
             setTimeout(() => setOpen(false), 2000);
-        } catch (error) {
-            console.error("Failed to report", error);
+        } catch (err: any) {
+            if (err?.message?.toLowerCase().includes("logged in")) {
+                setError("Sign in to report content");
+            } else {
+                setError("Failed to submit report");
+            }
         }
     };
 
@@ -53,6 +59,11 @@ export default function ReportButton({ targetType, targetId, targetUrl }: { targ
                             style={{ width: "100%", padding: 8, fontSize: 12, marginBottom: 10, resize: "none" }}
                         />
                         <button type="submit" className="btn-primary" style={{ width: "100%", padding: "8px", fontSize: 12 }}>Submit Report</button>
+                        {error && (
+                            <a href="/auth/login" style={{ display: "block", fontSize: 11, color: "#f97316", textAlign: "center", marginTop: 8, textDecoration: "underline" }}>
+                                {error}
+                            </a>
+                        )}
                     </form>
                 </div>
             )}

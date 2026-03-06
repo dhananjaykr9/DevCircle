@@ -129,7 +129,7 @@ export default async function NetworkPage({
                                 {/* City */}
                                 <div>
                                     <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "rgba(240,244,255,0.6)", marginBottom: 8 }}>City</label>
-                                    <select name="city" defaultValue={cityId} className="input" style={{ fontSize: 14 }}>
+                                    <select name="city" defaultValue={cityId} className="input" style={{ fontSize: 14 }} suppressHydrationWarning>
                                         <option value="">Any City</option>
                                         {cities.map(c => (
                                             <option key={c.id} value={c.id}>{c.name}</option>
@@ -140,7 +140,7 @@ export default async function NetworkPage({
                                 {/* Experience Level */}
                                 <div>
                                     <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "rgba(240,244,255,0.6)", marginBottom: 8 }}>Experience Level</label>
-                                    <select name="level" defaultValue={experienceLevel} className="input" style={{ fontSize: 14 }}>
+                                    <select name="level" defaultValue={experienceLevel} className="input" style={{ fontSize: 14 }} suppressHydrationWarning>
                                         <option value="">Any Experience</option>
                                         <option value="Fresher">Fresher</option>
                                         <option value="Junior Developer">Junior Developer</option>
@@ -162,7 +162,7 @@ export default async function NetworkPage({
                                     </label>
                                 </div>
 
-                                <button type="submit" className="btn-primary" style={{ marginTop: 8, padding: "10px", width: "100%", justifyContent: "center" }}>
+                                <button type="submit" className="btn-primary" style={{ marginTop: 8, padding: "10px", width: "100%", justifyContent: "center" }} suppressHydrationWarning>
                                     Apply Filters
                                 </button>
 

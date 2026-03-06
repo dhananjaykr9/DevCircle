@@ -59,7 +59,7 @@ export default async function CommunitiesPage({ searchParams }: { searchParams: 
                         Find your <span className="gradient-text-purple">city&apos;s</span> hub
                     </h1>
                     <p style={{ fontSize: 17, color: "rgba(240,244,255,0.5)", maxWidth: 520, marginBottom: 32, lineHeight: 1.7 }}>
-                        DevCircle is live across 12+ Indian cities. Join your local tech community and connect with professionals and early-career talent near you.
+                        DevCircle is currently live in Nagpur! More cities are on the waitlist. Join your local tech community or sign up to be notified when we launch in your city.
                     </p>
 
                     {/* Search bar */}
@@ -203,22 +203,23 @@ export default async function CommunitiesPage({ searchParams }: { searchParams: 
                         </p>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }} className="coming-grid">
                             {inactiveCities.map((city) => (
-                                <div
-                                    key={city.id}
-                                    className="glass-card"
-                                    style={{ padding: 22, opacity: 0.65 }}
-                                >
-                                    <h3 style={{ fontSize: 16, fontWeight: 600, color: "#f0f4ff", marginBottom: 4 }}>{city.name}</h3>
-                                    <div style={{ fontSize: 12, color: "rgba(240,244,255,0.35)", marginBottom: 12 }}>
-                                        <MapPin size={11} style={{ display: "inline", marginRight: 4 }} />{city.state}
-                                    </div>
-                                    <button
-                                        className="btn-secondary"
-                                        style={{ width: "100%", justifyContent: "center", padding: "8px 0", fontSize: 12, borderRadius: 8 }}
+                                <Link key={city.id} href={`/communities/${city.id}`} style={{ textDecoration: "none" }}>
+                                    <div
+                                        className="glass-card waitlist-card"
+                                        style={{ padding: 22, opacity: 0.75, transition: "all 0.3s ease" }}
                                     >
-                                        Join Waitlist
-                                    </button>
-                                </div>
+                                        <h3 style={{ fontSize: 16, fontWeight: 600, color: "#f0f4ff", marginBottom: 4 }}>{city.name}</h3>
+                                        <div style={{ fontSize: 12, color: "rgba(240,244,255,0.35)", marginBottom: 12 }}>
+                                            <MapPin size={11} style={{ display: "inline", marginRight: 4 }} />{city.state}
+                                        </div>
+                                        <span
+                                            className="btn-secondary"
+                                            style={{ width: "100%", justifyContent: "center", padding: "8px 0", fontSize: 12, borderRadius: 8, display: "flex", alignItems: "center", gap: 6 }}
+                                        >
+                                            Join Waitlist <ArrowRight size={12} />
+                                        </span>
+                                    </div>
+                                </Link>
                             ))}
                         </div>
                     </div>

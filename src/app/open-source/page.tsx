@@ -56,9 +56,15 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
                         </p>
                     </div>
                     <div>
-                        <Link href="/projects/new" className="btn-primary" style={{ padding: "14px 28px", fontSize: 15, display: "inline-flex", alignItems: "center", gap: 8 }}>
-                            <Plus size={18} /> Add Your Repository
-                        </Link>
+                        {session ? (
+                            <Link href="/projects/new" className="btn-primary" style={{ padding: "14px 28px", fontSize: 15, display: "inline-flex", alignItems: "center", gap: 8 }}>
+                                <Plus size={18} /> Add Your Repository
+                            </Link>
+                        ) : (
+                            <Link href="/auth/login" className="btn-secondary" style={{ padding: "14px 28px", fontSize: 15, display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+                                Sign in to contribute
+                            </Link>
+                        )}
                     </div>
                 </div>
             </section>
@@ -81,7 +87,11 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
                             <Github size={48} style={{ margin: "0 auto 20px", opacity: 0.3 }} color="#f0f4ff" />
                             <h2 style={{ fontSize: 20, fontWeight: 700, color: "#f0f4ff", margin: "0 0 8px 0" }}>No open source projects yet</h2>
                             <p style={{ fontSize: 15, color: "rgba(240,244,255,0.5)", margin: "0 0 24px 0" }}>Be the first to share an open source repository with the community.</p>
-                            <Link href="/projects/new" className="btn-primary" style={{ padding: "10px 20px" }}>Share Repository</Link>
+                            {session ? (
+                                <Link href="/projects/new" className="btn-primary" style={{ padding: "10px 20px" }}>Share Repository</Link>
+                            ) : (
+                                <Link href="/auth/login" className="btn-secondary" style={{ padding: "10px 20px", textDecoration: "none" }}>Sign in to share</Link>
+                            )}
                         </div>
                     ) : (
                         <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))" }}>

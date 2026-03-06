@@ -6,11 +6,16 @@ const prisma = new PrismaClient()
 async function main() {
     console.log('Seeding initial setup for DevCircle...')
 
-    // Insert Cities 
+    // Insert/update Cities 
     for (const city of cities) {
         await prisma.city.upsert({
             where: { name: city.name },
-            update: {},
+            update: {
+                isActive: city.active,
+                state: city.state,
+                tier: city.tier,
+                tags: city.tags.join(','),
+            },
             create: {
                 name: city.name,
                 state: city.state,

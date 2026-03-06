@@ -1,8 +1,9 @@
-import { auth } from "../../../auth";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { Trophy, Medal, Star, Award } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
     title: "Leaderboard — DevCircle",
@@ -10,8 +11,6 @@ export const metadata = {
 };
 
 export default async function LeaderboardPage() {
-    const session = await auth();
-
     // Fetch top 50 users by reputation
     const topUsers = await prisma.user.findMany({
         orderBy: { reputation: "desc" },

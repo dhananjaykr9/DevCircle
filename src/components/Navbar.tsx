@@ -16,9 +16,9 @@ import { motion, AnimatePresence } from "framer-motion";
 const primaryLinks = [
     { href: "/feed", label: "Home", icon: <Sparkles size={16} />, authOnly: true },
     { href: "/communities", label: "Communities", icon: <MapPin size={16} />, authOnly: false },
-    { href: "/discussions", label: "Discussions", icon: <MessageSquare size={16} />, authOnly: true },
+    { href: "/discussions", label: "Discussions", icon: <MessageSquare size={16} />, authOnly: false },
     { href: "/events", label: "Events", icon: <Calendar size={16} />, authOnly: false },
-    { href: "/projects", label: "Projects", icon: <FolderGit2 size={16} />, authOnly: true },
+    { href: "/projects", label: "Projects", icon: <FolderGit2 size={16} />, authOnly: false },
     { href: "/open-source", label: "Open Source", icon: <Github size={16} />, authOnly: false },
 ];
 
@@ -26,9 +26,9 @@ const moreMenuSections = [
     {
         title: "Build",
         links: [
-            { href: "/jobs", label: "Jobs", icon: <Briefcase size={16} />, authOnly: true },
-            { href: "/startups", label: "Startups", icon: <Rocket size={16} />, authOnly: true },
-            { href: "/learning", label: "Learning", icon: <BookOpen size={16} />, authOnly: true },
+            { href: "/jobs", label: "Jobs", icon: <Briefcase size={16} />, authOnly: false },
+            { href: "/startups", label: "Startups", icon: <Rocket size={16} />, authOnly: false },
+            { href: "/learning", label: "Learning", icon: <BookOpen size={16} />, authOnly: false },
             { href: "/mentorship", label: "Mentorship", icon: <Lightbulb size={16} />, authOnly: true },
         ],
     },
@@ -37,14 +37,14 @@ const moreMenuSections = [
         links: [
             { href: "/network", label: "Network", icon: <Users size={16} />, authOnly: true },
             { href: "/messages", label: "Messages", icon: <MessageSquare size={16} />, authOnly: true },
-            { href: "/leaderboard", label: "Leaderboard", icon: <Trophy size={16} />, authOnly: true },
+            { href: "/leaderboard", label: "Leaderboard", icon: <Trophy size={16} />, authOnly: false },
         ],
     },
     {
         title: "Govern",
         links: [
             { href: "/governance", label: "Governance", icon: <Vote size={16} />, authOnly: true },
-            { href: "/polls", label: "Polls", icon: <BarChart3 size={16} />, authOnly: true },
+            { href: "/polls", label: "Polls", icon: <BarChart3 size={16} />, authOnly: false },
         ],
     },
 ];
