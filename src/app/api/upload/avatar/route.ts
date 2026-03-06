@@ -5,7 +5,7 @@ import path from "path";
 
 export async function POST(req: NextRequest) {
     const session = await auth();
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     // Generate unique filename
     const ext = file.name.split(".").pop() || "jpg";
-    const safeName = session.user.email.replace(/[^a-zA-Z0-9]/g, "_");
+    const safeName = session.user.id.replace(/[^a-zA-Z0-9]/g, "_");
     const filename = `${safeName}_${Date.now()}.${ext}`;
 
     // Ensure upload directory exists

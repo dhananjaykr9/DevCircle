@@ -12,12 +12,12 @@ export const metadata = {
 export default async function EditProfilePage() {
     const session = await auth();
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
         redirect("/");
     }
 
     const user = await prisma.user.findUnique({
-        where: { email: session.user.email }
+        where: { id: session.user.id }
     });
 
     if (!user) redirect("/");

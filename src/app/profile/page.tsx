@@ -13,12 +13,12 @@ export const metadata = {
 export default async function ProfilePage() {
     const session = await auth();
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
         redirect("/");
     }
 
     const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
+        where: { id: session.user.id },
         include: {
             city: true,
             userBadges: { include: { badge: true }, orderBy: { awardedAt: "desc" } },

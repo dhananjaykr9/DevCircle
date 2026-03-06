@@ -7,7 +7,7 @@ import { auth } from "../../../auth";
 export async function updateProfile(formData: FormData) {
     const session = await auth();
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
         throw new Error("You must be logged in to update your profile.");
     }
 
@@ -27,7 +27,7 @@ export async function updateProfile(formData: FormData) {
     const openToCollaborate = formData.get("openToCollaborate") === "on";
 
     await prisma.user.update({
-        where: { email: session.user.email },
+        where: { id: session.user.id },
         data: {
             name: name || undefined,
             bio: bio || null,

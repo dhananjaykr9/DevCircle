@@ -6,18 +6,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     try {
         const { userId } = await params;
         const session = await auth();
-        if (!session?.user?.email) {
+        if (!session?.user?.id) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const currentUser = await prisma.user.findUnique({
-            where: { email: session.user.email },
-            select: { id: true }
-        });
-
-        if (!currentUser) {
-            return new NextResponse("Unauthorized", { status: 401 });
-        }
+        const currentUser = { id: session.user.id };
 
         // Get the url query params
         const url = new URL(request.url);

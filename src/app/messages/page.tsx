@@ -11,18 +11,13 @@ export const metadata = {
 
 export default async function MessagesInbox() {
     const session = await auth();
-    if (!session?.user?.email) redirect("/");
+    if (!session?.user?.id) redirect("/");
 
-    const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        select: { id: true }
-    });
-
-    if (!user) redirect("/");
+    const userId = session.user.id;
 
     const conversations = await prisma.conversation.findMany({
         where: {
-            OR: [{ user1Id: user.id }, { user2Id: user.id }]
+            OR: [{ user1Id: userId }, { user2Id: userId }]
         },
         include: {
             user1: { select: { id: true, name: true, image: true, jobTitle: true } },
@@ -34,7 +29,7 @@ export default async function MessagesInbox() {
             _count: {
                 select: {
                     messages: {
-                        where: { isRead: false, senderId: { not: user.id } }
+                        where: { isRead: false, senderId: { not: userId } }
                     }
                 }
             }
@@ -66,7 +61,7 @@ export default async function MessagesInbox() {
                         ) : (
                             <div style={{ display: "flex", flexDirection: "column" }}>
                                 {conversations.map((conv) => {
-                                    const otherUser = conv.user1Id === user.id ? conv.user2 : conv.user1;
+                                    const otherUser = conv.user1Id === userId ? conv.user2 : conv.user1;
                                     const lastMessage = conv.messages[0];
                                     const unreadCount = conv._count.messages;
 
@@ -122,7 +117,7 @@ export default async function MessagesInbox() {
                                                     }}>
                                                         {lastMessage ? (
                                                             <>
-                                                                {lastMessage.senderId === user.id && "You: "}
+                                                                {lastMessage.senderId === userId && "You: "}
                                                                 {lastMessage.text}
                                                             </>
                                                         ) : (
