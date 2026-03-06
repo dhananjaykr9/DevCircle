@@ -1,7 +1,7 @@
 import { createDiscussion } from "@/lib/actions/create";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { auth } from "@/../../auth";
+import { auth } from "../../../../auth";
 
 export default async function NewDiscussionPage() {
     const session = await auth();

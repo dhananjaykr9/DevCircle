@@ -1,28 +1,87 @@
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
-import LinkedIn from "next-auth/providers/linkedin"
+import Google from "next-auth/providers/google"
+import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { PrismaClient } from "@prisma/client"
+import bcrypt from "bcryptjs"
 
 const prisma = new PrismaClient()
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-    adapter: PrismaAdapter(prisma),
+    adapter: PrismaAdapter(prisma) as any,
+    trustHost: true,
+    session: {
+        strategy: "jwt"
+    },
     providers: [
         GitHub({
             clientId: process.env.GITHUB_ID,
             clientSecret: process.env.GITHUB_SECRET,
+            allowDangerousEmailAccountLinking: true,
         }),
-        LinkedIn({
-            clientId: process.env.LINKEDIN_ID,
-            clientSecret: process.env.LINKEDIN_SECRET,
+        Google({
+            clientId: process.env.GOOGLE_ID,
+            clientSecret: process.env.GOOGLE_SECRET,
+            allowDangerousEmailAccountLinking: true,
         }),
+        Credentials({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "email", placeholder: "developer@example.com" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error("Missing email or password");
+                }
+
+                const user = await prisma.user.findUnique({
+                    where: { email: credentials.email as string }
+                });
+
+                if (!user || !user.hashedPassword) {
+                    return null;
+                }
+
+                const isPasswordValid = await bcrypt.compare(credentials.password as string, user.hashedPassword);
+
+                if (!isPasswordValid) {
+                    return null;
+                }
+
+                return user;
+            }
+        })
     ],
+    pages: {
+        signIn: '/auth/login',
+        error: '/auth/login',
+    },
     callbacks: {
-        async session({ session, user }) {
-            if (session.user) {
-                session.user.id = user.id;
-                // Optionally fetch and attach more info here (role, city, etc.)
+        async jwt({ token, user, trigger }) {
+            if (user) {
+                token.id = user.id;
+                token.onboarded = (user as any).onboarded;
+            }
+            // Re-read onboarded status from DB when session is updated or on each sign-in
+            if (trigger === "update" || (token.id && !token.onboarded)) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: token.id as string },
+                    select: { onboarded: true, cityId: true }
+                });
+                if (dbUser) {
+                    token.onboarded = dbUser.onboarded;
+                    token.cityId = dbUser.cityId;
+                }
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token && session.user) {
+                session.user.id = token.id as string;
+                (session.user as any).onboarded = token.onboarded;
+                (session.user as any).cityId = token.cityId;
             }
             return session;
         },

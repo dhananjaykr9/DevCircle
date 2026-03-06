@@ -1,9 +1,7 @@
 import { createProject } from "@/lib/actions/create";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { auth } from "@/../../auth";
-
-const prisma = new PrismaClient();
+import { auth } from "../../../../auth";
 
 export default async function NewProjectPage() {
     const session = await auth();
@@ -48,6 +46,11 @@ export default async function NewProjectPage() {
                     <div>
                         <label style={{ display: "block", marginBottom: 8, fontSize: 13, color: "rgba(240,244,255,0.7)" }}>Tech Stack (comma-separated)</label>
                         <input name="techStack" className="input" placeholder="e.g. React, Node.js, Postgres" required style={{ width: "100%" }} />
+                    </div>
+
+                    <div>
+                        <label style={{ display: "block", marginBottom: 8, fontSize: 13, color: "rgba(240,244,255,0.7)" }}>Repository URL (Optional, for Open Source)</label>
+                        <input type="url" name="repositoryUrl" className="input" placeholder="https://github.com/username/repo" style={{ width: "100%" }} />
                     </div>
 
                     <div>

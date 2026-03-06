@@ -3,7 +3,8 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { auth } from "@/../../auth";
+import { auth } from "../../../auth";
+import { addReputation, awardBadge, checkAndAwardBadges } from "@/lib/reputation";
 
 export async function createDiscussion(formData: FormData) {
     const session = await auth();
@@ -35,6 +36,9 @@ export async function createDiscussion(formData: FormData) {
         }
     });
 
+    // Award first-post badge and check all badge thresholds
+    await checkAndAwardBadges(session.user.id);
+
     revalidatePath("/discussions");
     redirect("/discussions");
 }
@@ -51,6 +55,7 @@ export async function createProject(formData: FormData) {
     const techStack = formData.get("techStack") as string;
     const lookingFor = formData.get("lookingFor") as string;
     const cityId = formData.get("cityId") as string;
+    const repositoryUrl = formData.get("repositoryUrl") as string | null;
 
     if (!title || !description || !type || !cityId) {
         throw new Error("Missing required fields");
@@ -64,11 +69,14 @@ export async function createProject(formData: FormData) {
             status: "Recruiting",
             techStack: techStack || "",
             lookingFor: lookingFor || "",
+            repositoryUrl: repositoryUrl || null,
             teamSize: 1,
             authorId: session.user.id,
             cityId,
         }
     });
+
+    await awardBadge(session.user.id, "collaborator");
 
     revalidatePath("/projects");
     redirect("/projects");
@@ -132,13 +140,10 @@ export async function toggleUpvote(postId: string) {
         await prisma.upvote.delete({ where: { postId_userId: { postId, userId } } });
     } else {
         await prisma.upvote.create({ data: { postId, userId } });
-        // Award reputation to post author
+        // Award reputation to post author (triggers badge checks)
         const post = await prisma.post.findUnique({ where: { id: postId }, select: { authorId: true } });
         if (post && post.authorId !== userId) {
-            await prisma.user.update({
-                where: { id: post.authorId },
-                data: { reputation: { increment: 1 } },
-            });
+            await addReputation(post.authorId, 1);
         }
     }
 
@@ -170,6 +175,8 @@ export async function toggleRsvp(eventId: string) {
             throw new Error("This event is at full capacity");
         }
         await prisma.rsvp.create({ data: { eventId, userId } });
+        // Check for community-builder badge (5+ RSVPs)
+        await checkAndAwardBadges(userId);
     }
 
     revalidatePath("/events");

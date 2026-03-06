@@ -1,11 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { auth } from "../../../../auth";
 import { redirect } from "next/navigation";
 import { updateProfile } from "@/lib/actions/profile";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
-const prisma = new PrismaClient();
+import AvatarUpload from "@/components/AvatarUpload";
 
 export const metadata = {
     title: "Edit Profile | DevCircle",
@@ -26,7 +24,6 @@ export default async function EditProfilePage() {
 
     return (
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-            <Navbar />
             <main style={{ flex: 1, padding: "60px 0" }} className="section">
                 <div className="container" style={{ maxWidth: 640 }}>
                     <div className="glass-card" style={{ padding: 40 }}>
@@ -35,6 +32,9 @@ export default async function EditProfilePage() {
                         </h1>
 
                         <form action={updateProfile} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+
+                            {/* Profile Picture */}
+                            <AvatarUpload currentImage={user.image} userName={user.name} />
 
                             {/* Basic Info */}
                             <div>
@@ -88,10 +88,6 @@ export default async function EditProfilePage() {
                                     <div>
                                         <label className="label">GitHub URL</label>
                                         <input type="url" name="github" className="input" defaultValue={user.github || ""} placeholder="https://github.com/username" />
-                                    </div>
-                                    <div>
-                                        <label className="label">LinkedIn URL</label>
-                                        <input type="url" name="linkedin" className="input" defaultValue={user.linkedin || ""} placeholder="https://linkedin.com/in/username" />
                                     </div>
                                     <div>
                                         <label className="label">Portfolio / Personal Website</label>

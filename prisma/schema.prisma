@@ -17,6 +17,8 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  hashedPassword String? // Added for custom credentials auth
+  onboarded     Boolean   @default(false)
   role          String    @default("MEMBER") // MEMBER, MODERATOR, ADMIN
   reputation    Int       @default(0) // Used for auto-moderation 
   
@@ -46,7 +48,19 @@ model User {
   jobs          Job[]
   polls         Poll[]
   pollVotes     PollVote[]
+  userBadges    UserBadge[]
+  menteeRequests MentorRequest[] @relation("MenteeRequests")
+  mentorRequests MentorRequest[] @relation("MentorRequests")
+  conversations1 Conversation[] @relation("User1Conv")
+  conversations2 Conversation[] @relation("User2Conv")
+  messages      Message[]
   
+  proposals     Proposal[]
+  proposalVotes ProposalVote[]
+  reports       Report[]
+  resources     Resource[]
+  notifications Notification[]
+
   accounts      Account[]
   sessions      Session[]
 
@@ -167,11 +181,12 @@ model Project {
   id          String   @id @default(uuid())
   title       String
   description String
-  type        String   // Open Source, Startup, Research
-  status      String   // Active, Recruiting, Ideation
-  techStack   String   // comma-separated
-  lookingFor  String   // comma-separated roles
+  type        String   // Optional: Hackathon, Startup, Open Source, etc.
+  status      String   @default("Recruiting") // Recruiting, In Progress, Completed
+  techStack   String   // Comma-separated
+  lookingFor  String   // Comma-separated roles (e.g. Backend Dev, Designer)
   teamSize    Int      @default(1)
+  repositoryUrl String? // Link to GitHub/GitLab repo for Open Source projects
   
   // Relations
   authorId    String
@@ -279,4 +294,152 @@ model PollVote {
   createdAt    DateTime @default(now())
 
   @@unique([userId, pollOptionId])
+}
+
+// Contributor Badges
+model Badge {
+  id          String      @id @default(uuid())
+  slug        String      @unique  // e.g. "first-post", "mentor", "top-contributor"
+  name        String               // Display name
+  description String
+  icon        String               // emoji or icon name
+  category    String               // Community, Mentorship, Content, Event
+
+  userBadges  UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  badgeId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  awardedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+// Mentorship Program
+model MentorRequest {
+  id          String   @id @default(uuid())
+  status      String   @default("PENDING") // PENDING, ACCEPTED, DECLINED
+  area        String   // backend, cloud, ai-ml, career
+  message     String
+
+  menteeId    String
+  mentee      User     @relation("MenteeRequests", fields: [menteeId], references: [id])
+  mentorId    String
+  mentor      User     @relation("MentorRequests", fields: [mentorId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Direct Messaging
+model Conversation {
+  id        String   @id @default(uuid())
+  user1Id   String
+  user1     User     @relation("User1Conv", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2Id   String
+  user2     User     @relation("User2Conv", fields: [user2Id], references: [id], onDelete: Cascade)
+  
+  messages  Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // Updated when a new message arrives
+
+  @@unique([user1Id, user2Id]) // A unique conversation exists between two specific users
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  text           String
+  isRead         Boolean      @default(false)
+  
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime     @default(now())
+}
+
+// Governance
+model Proposal {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      String   @default("Active") // Active, Passed, Rejected
+
+  // Relations
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  votes       ProposalVote[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProposalVote {
+  id          String   @id @default(uuid())
+  vote        String   // "Yes" or "No"
+  
+  // Relations
+  proposalId  String
+  proposal    Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([proposalId, userId])
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  reason      String
+  status      String   @default("Pending") // Pending, Reviewed, Dismissed
+  
+  // What was reported
+  targetType  String   // e.g., "Post", "Comment", "User"
+  targetId    String
+  targetUrl   String?
+  
+  // Relations
+  reporterId  String
+  reporter    User     @relation(fields: [reporterId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Learning Resources
+model Resource {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  url         String
+  category    String   // Courses, Tutorials, Documentation, Tools
+  techStack   String   // Comma-separated tags e.g. React, Node.js
+
+  // Relations
+  submitterId String
+  submitter   User     @relation(fields: [submitterId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  type      String   // MESSAGE, REPLY, EVENT, MENTORSHIP
+  content   String
+  isRead    Boolean  @default(false)
+  link      String?  // URL to redirect on click
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
 }

@@ -1,0 +1,21 @@
+{
+    "name": "DevCircle",
+    "short_name": "DevCircle",
+    "description": "Your local tech ecosystem. Build, collaborate, and co-found with engineers in your city.",
+    "start_url": "/feed",
+    "display": "standalone",
+    "background_color": "#0d1120",
+    "theme_color": "#8b5cf6",
+    "icons": [
+        {
+            "src": "/images/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

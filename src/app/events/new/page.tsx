@@ -1,9 +1,7 @@
 import { createEvent } from "@/lib/actions/create";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { auth } from "@/../../auth";
-
-const prisma = new PrismaClient();
+import { auth } from "../../../../auth";
 
 export default async function NewEventPage() {
     const session = await auth();

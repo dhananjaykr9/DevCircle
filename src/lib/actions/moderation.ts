@@ -1,103 +1,55 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { auth } from "../../../auth";
 import { revalidatePath } from "next/cache";
 
-
-const MODERATOR_THRESHOLD = 500;
-
-/**
- * Automatically checks and promotes a user if they hit the reputation threshold.
- */
-async function checkAndPromoteUser(userId: string) {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) return;
-
-    if (user.role === "MEMBER" && user.reputation >= MODERATOR_THRESHOLD) {
-        await prisma.user.update({
-            where: { id: userId },
-            data: { role: "MODERATOR" }
-        });
-        console.log(`User ${user.id} autonomously promoted to MODERATOR.`);
+export async function reportContent(targetType: string, targetId: string, reason: string, targetUrl: string) {
+    const session = await auth();
+    if (!session?.user?.id) {
+        throw new Error("Must be logged in to report content");
     }
+
+    await prisma.report.create({
+        data: {
+            reason,
+            targetType,
+            targetId,
+            targetUrl,
+            reporterId: session.user.id,
+        }
+    });
+
+    return { success: true };
 }
 
-/**
- * Server Action to upvote a post.
- * Adds an upvote record, increments the author's reputation, and triggers auto-moderation check.
- */
-export async function upvotePost(postId: string, userId: string) {
-    try {
-        // Prevent duplicate upvotes
-        const existing = await prisma.upvote.findUnique({
-            where: {
-                postId_userId: { postId, userId }
-            }
-        });
-
-        if (existing) return { success: false, message: "Already upvoted" };
-
-        // Transaction to ensure data consistency
-        await prisma.$transaction(async (tx) => {
-            // 1. Create the upvote
-            await tx.upvote.create({
-                data: { postId, userId }
-            });
-
-            // 2. Find the author of the post to increase their reputation
-            const post = await tx.post.findUnique({
-                where: { id: postId },
-                select: { authorId: true }
-            });
-
-            if (post) {
-                // 3. Increment author's reputation
-                await tx.user.update({
-                    where: { id: post.authorId },
-                    data: { reputation: { increment: 10 } }
-                });
-
-                // 4. Check for automated promotion based on reputation
-                await checkAndPromoteUser(post.authorId);
-            }
-        });
-
-        revalidatePath("/discussions");
-        return { success: true };
-    } catch (error) {
-        console.error("Error upvoting post:", error);
-        return { success: false, error: "Failed to upvote" };
+export async function resolveReport(reportId: string, action: "Dismiss" | "DeleteContent") {
+    const session = await auth();
+    if (!session?.user?.id || (session.user.role !== "MODERATOR" && session.user.role !== "ADMIN")) {
+        throw new Error("Unauthorized");
     }
-}
 
-/**
- * Remove an upvote
- */
-export async function removeUpvote(postId: string, userId: string) {
-    try {
-        await prisma.$transaction(async (tx) => {
-            await tx.upvote.delete({
-                where: { postId_userId: { postId, userId } }
-            });
+    const report = await prisma.report.findUnique({ where: { id: reportId } });
+    if (!report) throw new Error("Report not found");
 
-            const post = await tx.post.findUnique({
-                where: { id: postId },
-                select: { authorId: true }
-            });
+    if (action === "DeleteContent") {
+        if (report.targetType === "Post" || report.targetType === "Discussion") {
+            await prisma.post.deleteMany({ where: { id: report.targetId } });
+        } else if (report.targetType === "Comment") {
+            await prisma.comment.deleteMany({ where: { id: report.targetId } });
+        }
 
-            if (post) {
-                await tx.user.update({
-                    where: { id: post.authorId },
-                    data: { reputation: { decrement: 10 } }
-                });
-                // Note: We don't demote automatically to prevent aggressive demotion loop
-            }
+        // Mark all reports for this target as Reviewed
+        await prisma.report.updateMany({
+            where: { targetId: report.targetId, targetType: report.targetType },
+            data: { status: "Reviewed" }
         });
-
-        revalidatePath("/discussions");
-        return { success: true };
-    } catch (error) {
-        console.error("Error removing upvote:", error);
-        return { success: false, error: "Failed to remove upvote" };
+    } else {
+        await prisma.report.update({
+            where: { id: reportId },
+            data: { status: "Dismissed" }
+        });
     }
+
+    revalidatePath("/moderation");
 }

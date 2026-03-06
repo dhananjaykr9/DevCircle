@@ -1,0 +1,19 @@
+﻿auth.ts(10,5): error TS2322: Type 'import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/adapters").Adapter' is not assignable to type 'import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/adapters").Adapter'.
+  Types of property 'createUser' are incompatible.
+    Type '((user: import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/adapters").AdapterUser) => import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/types").Awaitable<import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/adapters").AdapterUser>) | undefined' is not assignable to type '((user: import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/adapters").AdapterUser) => import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/types").Awaitable<import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/adapters").Adap...'.
+      Type '(user: import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/adapters").AdapterUser) => import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/types").Awaitable<import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/adapters").AdapterUser>' is not assignable to type '(user: import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/adapters").AdapterUser) => import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/types").Awaitable<import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/adapters").Adapt...'.
+        Type 'import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/types").Awaitable<import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/adapters").AdapterUser>' is not assignable to type 'import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/types").Awaitable<import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/adapters").AdapterUser>'.
+          Type 'AdapterUser' is not assignable to type 'Awaitable<AdapterUser>'.
+            Property 'role' is missing in type 'import("D:/VNIT/DevCircle/devcircle/node_modules/@auth/core/adapters").AdapterUser' but required in type 'import("D:/VNIT/DevCircle/devcircle/node_modules/next-auth/node_modules/@auth/core/adapters").AdapterUser'.
+src/app/discussions/page.tsx(8,22): error TS2307: Cannot find module '@/../../../auth' or its corresponding type declarations.
+src/app/governance/page.tsx(52,35): error TS2322: Type '(formData: FormData) => Promise<{ success: boolean; }>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '(formData: FormData) => Promise<{ success: boolean; }>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<{ success: boolean; }>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<{ success: boolean; }>' is not assignable to type 'Promise<void>'.
+        Type '{ success: boolean; }' is not assignable to type 'void'.
+src/app/jobs/page.tsx(5,22): error TS2307: Cannot find module '@/../../../auth' or its corresponding type declarations.
+src/app/learning/page.tsx(67,35): error TS2322: Type '(formData: FormData) => Promise<{ success: boolean; }>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '(formData: FormData) => Promise<{ success: boolean; }>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<{ success: boolean; }>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<{ success: boolean; }>' is not assignable to type 'Promise<void>'.
+        Type '{ success: boolean; }' is not assignable to type 'void'.

@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Users, MessageSquare, Zap, MapPin, Code2, Rocket, Shield, Star } from "lucide-react";
 import Footer from "@/components/Footer";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 const features = [
   {
@@ -184,11 +182,11 @@ export default async function HomePage() {
               color: "#f0f4ff",
             }}
           >
-            Your City&apos;s Tech
+            Connect, Learn, and Build
             <br />
-            <span className="gradient-text">Community</span>
+            with the Local Tech
             <br />
-            <span style={{ color: "rgba(240,244,255,0.65)" }}>Has Arrived.</span>
+            <span className="gradient-text">Community.</span>
           </h1>
 
           <p
@@ -200,11 +198,11 @@ export default async function HomePage() {
           </p>
 
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/communities" className="btn-primary" style={{ fontSize: 16, padding: "14px 32px" }}>
-              Join Your City <ArrowRight size={16} />
+            <Link href="/auth/signup" className="btn-primary" style={{ fontSize: 16, padding: "14px 32px" }}>
+              Join DevCircle <ArrowRight size={16} />
             </Link>
-            <Link href="/discussions" className="btn-secondary" style={{ fontSize: 16, padding: "14px 32px" }}>
-              Explore Discussions
+            <Link href="/communities" className="btn-secondary" style={{ fontSize: 16, padding: "14px 32px" }}>
+              Explore Communities
             </Link>
           </div>
 
@@ -405,7 +403,7 @@ export default async function HomePage() {
             Connect with the brightest engineers in Nagpur, Pune, Hyderabad, and beyond. Your local tech career starts here.
           </p>
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/communities" className="btn-primary" style={{ fontSize: 16, padding: "14px 36px" }}>Join Your Community <ArrowRight size={16} /></Link>
+            <Link href="/auth/signup" className="btn-primary" style={{ fontSize: 16, padding: "14px 36px" }}>Join DevCircle <ArrowRight size={16} /></Link>
             <Link href="/events" className="btn-secondary" style={{ fontSize: 16, padding: "14px 36px" }}>Browse Local Events</Link>
           </div>
         </div>

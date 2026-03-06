@@ -6,7 +6,12 @@ import { Providers } from "@/components/Providers";
 export const metadata: Metadata = {
   title: "DevCircle — Hyper-Local Tech Community for Professionals and Freshers",
   description: "DevCircle connects professionals and freshers in your city. Discover local tech communities, join discussions, collaborate on projects, and attend meetups across India.",
+  manifest: "/manifest.json",
   keywords: "developer community India, tech professionals, freshers, local tech meetup, Nagpur developers",
+  icons: {
+    icon: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
   openGraph: {
     title: "DevCircle",
     description: "Connect with professionals and freshers in your city. Forums, projects, events, and mentorship.",

@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Search, MapPin, Briefcase, Code, Award, SlidersHorizontal, User } from "lucide-react";
+import { Search, MapPin, Briefcase, Code, Award, SlidersHorizontal, User, Sparkles } from "lucide-react";
+import { auth } from "../../../auth";
 
 export const metadata = {
     title: "Network | DevCircle",
@@ -12,13 +12,14 @@ export const metadata = {
 export default async function NetworkPage({
     searchParams,
 }: {
-    searchParams: { q?: string; city?: string; level?: string; mentor?: string; collab?: string }
+    searchParams: Promise<{ q?: string; city?: string; level?: string; mentor?: string; collab?: string }>
 }) {
-    const query = searchParams.q || "";
-    const cityId = searchParams.city || "";
-    const experienceLevel = searchParams.level || "";
-    const isMentor = searchParams.mentor === "true";
-    const isCollab = searchParams.collab === "true";
+    const params = await searchParams;
+    const query = params.q || "";
+    const cityId = params.city || "";
+    const experienceLevel = params.level || "";
+    const isMentor = params.mentor === "true";
+    const isCollab = params.collab === "true";
 
     // Build Prisma Where Clause based on filters
     const whereClause: any = {};
@@ -44,6 +45,34 @@ export default async function NetworkPage({
         take: 50 // Limit for now
     });
 
+    const session = await auth();
+    let recommendedUsers: any[] = [];
+    const isFiltered = query || cityId || experienceLevel || isMentor || isCollab;
+
+    if (session?.user?.id && !isFiltered) {
+        const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+        if (currentUser) {
+            const mySkills = currentUser.skills?.toLowerCase().split(',').map(s => s.trim()) || [];
+
+            recommendedUsers = users
+                .filter(u => u.id !== currentUser.id)
+                .map(u => {
+                    let score = 0;
+                    if (u.cityId === currentUser.cityId) score += 2;
+                    if (u.experienceLevel && u.experienceLevel === currentUser.experienceLevel) score += 1;
+
+                    const theirSkills = u.skills?.toLowerCase().split(',').map(s => s.trim()) || [];
+                    const commonSkills = mySkills.filter(s => theirSkills.includes(s));
+                    score += commonSkills.length * 3;
+
+                    return { ...u, matchScore: score };
+                })
+                .filter(u => u.matchScore > 2)
+                .sort((a, b) => b.matchScore - a.matchScore)
+                .slice(0, 3);
+        }
+    }
+
     const cities = await prisma.city.findMany({
         where: { isActive: true },
         orderBy: { name: "asc" }
@@ -51,7 +80,6 @@ export default async function NetworkPage({
 
     return (
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-            <Navbar />
 
             {/* Header */}
             <header className="hero-gradient" style={{ padding: "60px 0 40px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
@@ -77,7 +105,7 @@ export default async function NetworkPage({
                                 <h2 style={{ fontSize: 16, fontWeight: 600, color: "#f0f4ff" }}>Filters</h2>
                             </div>
 
-                            <form style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                            <form action="/network" method="get" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
                                 {/* Search */}
                                 <div>
@@ -145,8 +173,39 @@ export default async function NetworkPage({
 
                         {/* Members Grid */}
                         <div>
-                            <div style={{ marginBottom: 20, fontSize: 14, color: "rgba(240,244,255,0.5)" }}>
-                                Showing {users.length} member{users.length !== 1 ? 's' : ''}
+                            {recommendedUsers.length > 0 && (
+                                <div style={{ marginBottom: 40 }}>
+                                    <h2 style={{ fontSize: 18, fontWeight: 700, color: "#f0f4ff", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                                        <Sparkles size={18} color="#8b5cf6" /> Recommended For You
+                                    </h2>
+                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
+                                        {recommendedUsers.map((u) => {
+                                            const avatar = u.image || `https://ui-avatars.com/api/?name=${u.name || "U"}&background=8b5cf6&color=fff`;
+                                            return (
+                                                <Link href={`/members/${u.id}`} key={"rec_" + u.id} style={{ textDecoration: "none" }}>
+                                                    <div className="glass-card" style={{ padding: 16, display: "flex", alignItems: "center", gap: 16, border: "1px solid rgba(139,92,246,0.2)", background: "linear-gradient(135deg, rgba(139,92,246,0.05), rgba(139,92,246,0.02))", transition: "transform 0.2s" }}
+                                                    >
+                                                        <img src={avatar} alt={u.name || "User"} style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover" }} />
+                                                        <div>
+                                                            <h3 style={{ fontSize: 15, fontWeight: 600, color: "#f0f4ff", marginBottom: 2 }}>{u.name || "Anonymous"}</h3>
+                                                            <div style={{ fontSize: 12, color: "#c4b5fd", fontWeight: 500, marginBottom: 4 }}>
+                                                                {u.matchScore}% Match Score
+                                                            </div>
+                                                            <div style={{ fontSize: 11, color: "rgba(240,244,255,0.4)", display: "flex", gap: 6, flexWrap: "wrap" }}>
+                                                                {u.skills?.split(',').slice(0, 2).map((s: string) => <span key={s}>{s.trim()}</span>)}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div style={{ marginBottom: 20, fontSize: 14, color: "rgba(240,244,255,0.5)", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: 12 }}>
+                                <span>Showing {users.length} member{users.length !== 1 ? 's' : ''}</span>
+                                {isFiltered && <span style={{ color: "#f97316", fontSize: 13, fontWeight: 500 }}>Filtered Results</span>}
                             </div>
 
                             {users.length === 0 ? (
@@ -162,8 +221,6 @@ export default async function NetworkPage({
                                         return (
                                             <Link href={`/members/${u.id}`} key={u.id} style={{ textDecoration: "none" }}>
                                                 <div className="glass-card" style={{ padding: 20, height: "100%", display: "flex", flexDirection: "column", transition: "transform 0.2s, background 0.2s" }}
-                                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
                                                 >
                                                     <div style={{ display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 16 }}>
                                                         <img src={avatar} alt={u.name || "User"} style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover" }} />

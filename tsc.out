@@ -1,0 +1,27 @@
+src/app/communities/[id]/page.tsx(24,97): error TS2353: Object literal may only specify known properties, and 'isMentor' does not exist in type 'UserSelect<DefaultArgs>'.
+src/app/communities/[id]/page.tsx(41,99): error TS2339: Property '_count' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(42,84): error TS2339: Property '_count' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(43,89): error TS2339: Property '_count' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(44,83): error TS2339: Property '_count' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(65,44): error TS2339: Property '_count' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(70,43): error TS2339: Property 'members' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(70,68): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/app/communities/[id]/page.tsx(70,71): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/app/communities/[id]/page.tsx(75,43): error TS2339: Property '_count' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(77,52): error TS2339: Property '_count' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(185,39): error TS2339: Property '_count' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(185,249): error TS2339: Property 'members' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; name: string; state: string; image: string | null; tier: string; tags: string; isActive: boolean; }'.
+src/app/communities/[id]/page.tsx(185,261): error TS7006: Parameter 'member' implicitly has an 'any' type.
+src/app/notifications/page.tsx(53,31): error TS2322: Type '() => Promise<{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '() => Promise<{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }>' is not assignable to type 'Promise<void>'.
+        Type '{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }' is not assignable to type 'void'.
+          Type '{ error: string; success?: undefined; }' is not assignable to type 'void'.
+src/app/onboarding/OnboardingForm.tsx(37,117): error TS1117: An object literal cannot have multiple properties with the same name.
+src/app/onboarding/OnboardingForm.tsx(49,117): error TS1117: An object literal cannot have multiple properties with the same name.
+src/app/onboarding/OnboardingForm.tsx(63,117): error TS1117: An object literal cannot have multiple properties with the same name.
+src/app/onboarding/OnboardingForm.tsx(70,117): error TS1117: An object literal cannot have multiple properties with the same name.
+src/app/profile/page.tsx(7,10): error TS2305: Module '"@/lib/actions/mentorship"' has no exported member 'acceptMentorRequest'.
+src/app/profile/page.tsx(7,31): error TS2305: Module '"@/lib/actions/mentorship"' has no exported member 'declineMentorRequest'.
+src/components/MentorRequestForm.tsx(4,10): error TS2305: Module '"@/lib/actions/mentorship"' has no exported member 'requestMentorship'.

@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { MapPin, Users, MessageSquare, Zap, Calendar, ArrowRight, Star, Code2, Award } from "lucide-react";
 import Footer from "@/components/Footer";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export async function generateStaticParams() {
     const cities = await prisma.city.findMany({ select: { id: true } });
@@ -22,10 +20,12 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
     };
 }
 
-const tabs = ["Feed", "Discussions", "Projects", "Events", "Members"];
+const tabs = ["Discussions", "Events", "Projects", "Members", "About"];
 
-export default async function CityPage({ params }: { params: Promise<{ city: string }> }) {
+export default async function CityPage({ params, searchParams }: { params: Promise<{ city: string }>; searchParams: Promise<{ tab?: string }> }) {
     const { city } = await params;
+    const resolvedSearchParams = await searchParams;
+    const currentTab = resolvedSearchParams.tab || "discussions";
 
     const cityData = await prisma.city.findUnique({
         where: { id: city },
@@ -126,7 +126,7 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                             </div>
                         </div>
 
-                        <Link href="#" className="btn-primary">
+                        <Link href={`/communities/${city}`} className="btn-primary">
                             Join Community <ArrowRight size={15} />
                         </Link>
                     </div>
@@ -173,25 +173,31 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
             <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", background: "rgba(8,11,20,0.7)", position: "sticky", top: 68, zIndex: 50 }}>
                 <div className="container">
                     <div style={{ display: "flex", gap: 4, overflowX: "auto" }}>
-                        {tabs.map((tab, i) => (
-                            <button
-                                key={tab}
-                                style={{
-                                    padding: "14px 18px",
-                                    background: "none",
-                                    border: "none",
-                                    borderBottom: i === 0 ? "2px solid #f97316" : "2px solid transparent",
-                                    color: i === 0 ? "#f97316" : "rgba(240,244,255,0.5)",
-                                    fontSize: 14,
-                                    fontWeight: 500,
-                                    cursor: "pointer",
-                                    whiteSpace: "nowrap",
-                                    transition: "all 0.2s",
-                                }}
-                            >
-                                {tab}
-                            </button>
-                        ))}
+                        {tabs.map((tab) => {
+                            const tabKey = tab.toLowerCase();
+                            const isActive = currentTab === tabKey;
+                            return (
+                                <Link
+                                    key={tab}
+                                    href={`/communities/${city}?tab=${tabKey}`}
+                                    scroll={false}
+                                    style={{
+                                        padding: "14px 18px",
+                                        background: "none",
+                                        borderBottom: isActive ? "2px solid #f97316" : "2px solid transparent",
+                                        color: isActive ? "#f97316" : "rgba(240,244,255,0.5)",
+                                        fontSize: 14,
+                                        fontWeight: 500,
+                                        cursor: "pointer",
+                                        whiteSpace: "nowrap",
+                                        transition: "all 0.2s",
+                                        textDecoration: "none",
+                                    }}
+                                >
+                                    {tab}
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
@@ -201,13 +207,16 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                 <div className="container">
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 32 }} className="city-layout">
 
-                        {/* Main feed */}
+                        {/* Main content - tab-aware */}
                         <div>
-                            <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 20 }}>
-                                Recent Discussions
-                            </h2>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 40 }}>
-                                {cityDiscussions.map((d) => (
+                            {(currentTab === "discussions" || !currentTab) && (
+                                <>
+                                    <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 20 }}>
+                                        Recent Discussions
+                                    </h2>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 40 }}>
+                                        {cityDiscussions.length === 0 && <div className="glass-card" style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.4)" }}>No discussions yet. Start one!</div>}
+                                        {cityDiscussions.map((d) => (
                                     <Link key={d.id} href="/discussions" style={{ textDecoration: "none" }}>
                                         <div className="glass-card" style={{ padding: "18px 22px" }}>
                                             <div style={{ display: "flex", gap: 16 }}>
@@ -234,12 +243,17 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                                     </Link>
                                 ))}
                             </div>
+                                </>
+                            )}
 
-                            <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 20 }}>
-                                Active Projects
-                            </h2>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                                {cityProjects.map((p) => (
+                            {currentTab === "projects" && (
+                                <>
+                                    <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 20 }}>
+                                        Active Projects
+                                    </h2>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                                        {cityProjects.length === 0 && <div className="glass-card" style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.4)" }}>No projects yet.</div>}
+                                        {cityProjects.map((p) => (
                                     <div key={p.id} className="glass-card" style={{ padding: "20px 24px" }}>
                                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
                                             <span className={`tag ${p.type === "Open Source" ? "tag-green" : p.type === "Startup" ? "" : "tag-purple"}`} style={{ fontSize: 11 }}>
@@ -262,6 +276,72 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                                     </div>
                                 ))}
                             </div>
+                                </>
+                            )}
+
+                            {currentTab === "events" && (
+                                <>
+                                    <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 20 }}>
+                                        Upcoming Events
+                                    </h2>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                                        {cityEvents.length === 0 && <div className="glass-card" style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.4)" }}>No upcoming events.</div>}
+                                        {cityEvents.map((ev) => (
+                                            <div key={ev.id} className="glass-card" style={{ padding: "20px 24px" }}>
+                                                <div style={{ fontSize: 12, color: "#10b981", marginBottom: 6, fontWeight: 600 }}>{ev.date.toLocaleDateString()} · {ev.time}</div>
+                                                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#f0f4ff", marginBottom: 8 }}>{ev.title}</h3>
+                                                <div style={{ display: "flex", gap: 16, fontSize: 12, color: "rgba(240,244,255,0.4)" }}>
+                                                    <span>{ev.type}</span>
+                                                    <span>{ev.venue}</span>
+                                                    <span>{ev.fee}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {currentTab === "members" && (
+                                <>
+                                    <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 20 }}>
+                                        Community Members
+                                    </h2>
+                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: 14 }}>
+                                        {cityMembers.map((m, i) => (
+                                            <Link key={m.id} href={`/members/${m.id}`} style={{ textDecoration: "none" }}>
+                                                <div className="glass-card" style={{ padding: 20, display: "flex", alignItems: "center", gap: 12 }}>
+                                                    <div style={{ width: 40, height: 40, borderRadius: "50%", background: `linear-gradient(135deg, ${["#f97316", "#8b5cf6", "#3b82f6", "#10b981", "#f59e0b"][i % 5]}, ${["#ea580c", "#7c3aed", "#2563eb", "#059669", "#d97706"][i % 5]})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "white", flexShrink: 0 }}>
+                                                        {m.name?.substring(0, 2).toUpperCase() || "U"}
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ fontSize: 14, fontWeight: 600, color: "#f0f4ff" }}>{m.name}</div>
+                                                        <div style={{ fontSize: 12, color: "rgba(240,244,255,0.4)" }}>{m.experienceLevel || "Member"}</div>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {currentTab === "about" && (
+                                <>
+                                    <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 20 }}>
+                                        About DevCircle {cityData.name}
+                                    </h2>
+                                    <div className="glass-card" style={{ padding: 28 }}>
+                                        <p style={{ fontSize: 15, color: "rgba(240,244,255,0.6)", lineHeight: 1.8, marginBottom: 24 }}>
+                                            DevCircle {cityData.name} is a hyper-local tech community in {cityData.state}. We connect professionals and freshers
+                                            for collaboration, mentorship, and growth. Join {cityData._count.members} members building the future of tech in {cityData.name}.
+                                        </p>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                                            {cityData.tags?.split(',').map((tag) => (
+                                                <span key={tag} className="tag tag-blue" style={{ fontSize: 12 }}>{tag}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         {/* Sidebar */}

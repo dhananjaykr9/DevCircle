@@ -4,19 +4,60 @@ import { categories } from "@/lib/data";
 import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";
 import UpvoteButton from "@/components/UpvoteButton";
-import { auth } from "@/../../auth";
+import ReportButton from "@/components/ReportButton";
+import { auth } from "../../../auth";
 
 export const metadata = {
     title: "Discussions — DevCircle",
     description: "Join technical discussions with professionals and freshers across India. AI/ML, Cloud, Web Dev, DevOps, System Design, and more.",
 };
 
-export default async function DiscussionsPage() {
+function timeAgo(date: Date): string {
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (seconds < 60) return "just now";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    return `${months}mo ago`;
+}
+
+export default async function DiscussionsPage({ searchParams }: { searchParams: Promise<{ q?: string; category?: string; sort?: string }> }) {
     const session = await auth();
     const userId = session?.user?.id;
+    const params = await searchParams;
+
+    const searchQuery = params.q || "";
+    const selectedCategory = params.category || "";
+    const currentSort = params.sort || "latest";
+
+    // Build Prisma where clause
+    const where: any = {};
+    if (searchQuery) {
+        where.OR = [
+            { title: { contains: searchQuery } },
+            { preview: { contains: searchQuery } },
+            { tags: { contains: searchQuery } },
+        ];
+    }
+    if (selectedCategory) {
+        where.category = selectedCategory;
+    }
+
+    // Build order clause
+    let orderBy: any = { createdAt: "desc" };
+    if (currentSort === "top") orderBy = { upvotes: { _count: "desc" } };
+    if (currentSort === "unanswered") {
+        where.comments = { none: {} };
+        orderBy = { createdAt: "desc" };
+    }
 
     const discussions = await prisma.post.findMany({
-        orderBy: { createdAt: "desc" },
+        where,
+        orderBy,
         include: {
             author: true,
             city: true,
@@ -28,6 +69,7 @@ export default async function DiscussionsPage() {
             }
         }
     });
+
     // Fetch IDs of posts the current user already upvoted
     const upvotedIds = userId
         ? (await prisma.upvote.findMany({ where: { userId }, select: { postId: true } })).map(u => u.postId)
@@ -37,6 +79,27 @@ export default async function DiscussionsPage() {
     const totalComments = await prisma.comment.count();
     const totalUpvotes = await prisma.upvote.count();
     const totalMembers = await prisma.user.count();
+
+    // Get real category counts from DB
+    const categoryCounts = await prisma.post.groupBy({
+        by: ["category"],
+        _count: { _all: true },
+    });
+    const countMap: Record<string, number> = {};
+    categoryCounts.forEach(c => { countMap[c.category] = c._count._all; });
+
+    // Helper to build search URL preserving other params
+    function buildUrl(overrides: Record<string, string>) {
+        const p: Record<string, string> = {};
+        if (searchQuery) p.q = searchQuery;
+        if (selectedCategory) p.category = selectedCategory;
+        if (currentSort && currentSort !== "latest") p.sort = currentSort;
+        Object.assign(p, overrides);
+        // Remove empty values
+        Object.keys(p).forEach(k => { if (!p[k]) delete p[k]; });
+        const qs = new URLSearchParams(p).toString();
+        return `/discussions${qs ? `?${qs}` : ""}`;
+    }
 
     return (
         <>
@@ -79,9 +142,30 @@ export default async function DiscussionsPage() {
                                 <h3 style={{ fontSize: 13, fontWeight: 600, color: "rgba(240,244,255,0.6)", marginBottom: 14, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                                     Categories
                                 </h3>
+                                <Link
+                                    href={buildUrl({ category: "" })}
+                                    style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        padding: "9px 12px",
+                                        borderRadius: 8,
+                                        marginBottom: 2,
+                                        textDecoration: "none",
+                                        background: !selectedCategory ? "rgba(249,115,22,0.1)" : "transparent",
+                                        transition: "all 0.2s",
+                                    }}
+                                >
+                                    <span style={{ fontSize: 14, color: !selectedCategory ? "#f97316" : "rgba(240,244,255,0.65)", fontWeight: !selectedCategory ? 600 : 400 }}>All Categories</span>
+                                    <span style={{ fontSize: 11, color: "rgba(240,244,255,0.3)", background: "rgba(255,255,255,0.05)", padding: "2px 7px", borderRadius: 100 }}>
+                                        {totalDiscussions}
+                                    </span>
+                                </Link>
                                 {categories.map((cat) => (
-                                    <button
+                                    <Link
                                         key={cat.id}
+                                        href={buildUrl({ category: cat.label })}
                                         style={{
                                             width: "100%",
                                             display: "flex",
@@ -89,21 +173,20 @@ export default async function DiscussionsPage() {
                                             justifyContent: "space-between",
                                             padding: "9px 12px",
                                             borderRadius: 8,
-                                            border: "none",
-                                            background: "transparent",
-                                            cursor: "pointer",
                                             marginBottom: 2,
+                                            textDecoration: "none",
+                                            background: selectedCategory === cat.label ? "rgba(249,115,22,0.1)" : "transparent",
                                             transition: "all 0.2s",
                                         }}
                                     >
-                                        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: "rgba(240,244,255,0.65)" }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: selectedCategory === cat.label ? "#f97316" : "rgba(240,244,255,0.65)", fontWeight: selectedCategory === cat.label ? 600 : 400 }}>
                                             <span>{cat.icon}</span>
                                             {cat.label}
                                         </div>
                                         <span style={{ fontSize: 11, color: "rgba(240,244,255,0.3)", background: "rgba(255,255,255,0.05)", padding: "2px 7px", borderRadius: 100 }}>
-                                            {cat.count}
+                                            {countMap[cat.label] || 0}
                                         </span>
-                                    </button>
+                                    </Link>
                                 ))}
                             </div>
 
@@ -129,36 +212,43 @@ export default async function DiscussionsPage() {
                         {/* Main: discussion list */}
                         <div>
                             {/* Search + Filter bar */}
-                            <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
+                            <form action="/discussions" method="get" style={{ display: "flex", gap: 10, marginBottom: 24 }}>
+                                {selectedCategory && <input type="hidden" name="category" value={selectedCategory} />}
+                                {currentSort !== "latest" && <input type="hidden" name="sort" value={currentSort} />}
                                 <div style={{ position: "relative", flex: 1 }}>
                                     <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.3)" }} />
-                                    <input className="input" placeholder="Search discussions..." style={{ paddingLeft: 38 }} />
+                                    <input className="input" name="q" defaultValue={searchQuery} placeholder="Search discussions..." style={{ paddingLeft: 38 }} />
                                 </div>
-                                <button className="btn-secondary" style={{ padding: "10px 16px", borderRadius: 10, display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
-                                    <Filter size={14} /> Filter
+                                <button type="submit" className="btn-secondary" style={{ padding: "10px 16px", borderRadius: 10, display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
+                                    <Search size={14} /> Search
                                 </button>
-                            </div>
+                            </form>
 
                             {/* Sort */}
                             <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
-                                {["Top", "Latest", "Hot", "Unanswered"].map((sort, i) => (
-                                    <button
-                                        key={sort}
+                                {[
+                                    { key: "latest", label: "Latest" },
+                                    { key: "top", label: "Top" },
+                                    { key: "unanswered", label: "Unanswered" },
+                                ].map((sort) => (
+                                    <Link
+                                        key={sort.key}
+                                        href={buildUrl({ sort: sort.key === "latest" ? "" : sort.key })}
                                         style={{
                                             padding: "6px 14px",
                                             borderRadius: 8,
                                             border: "1px solid",
                                             fontSize: 13,
                                             fontWeight: 500,
-                                            cursor: "pointer",
-                                            background: i === 0 ? "rgba(249,115,22,0.15)" : "transparent",
-                                            color: i === 0 ? "#f97316" : "rgba(240,244,255,0.45)",
-                                            borderColor: i === 0 ? "rgba(249,115,22,0.3)" : "rgba(255,255,255,0.08)",
+                                            textDecoration: "none",
+                                            background: currentSort === sort.key ? "rgba(249,115,22,0.15)" : "transparent",
+                                            color: currentSort === sort.key ? "#f97316" : "rgba(240,244,255,0.45)",
+                                            borderColor: currentSort === sort.key ? "rgba(249,115,22,0.3)" : "rgba(255,255,255,0.08)",
                                             transition: "all 0.2s",
                                         }}
                                     >
-                                        {sort}
-                                    </button>
+                                        {sort.label}
+                                    </Link>
                                 ))}
                             </div>
 
@@ -250,10 +340,9 @@ export default async function DiscussionsPage() {
                                                         <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "rgba(240,244,255,0.35)" }}>
                                                             <MessageSquare size={12} /> {d._count.comments}
                                                         </span>
-                                                        <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "rgba(240,244,255,0.35)" }}>
-                                                            <Eye size={12} /> {Math.floor(Math.random() * 500) + 120}
-                                                        </span>
-                                                        <span style={{ fontSize: 11, color: "rgba(240,244,255,0.25)" }}>Recently</span>
+                                                        <span style={{ fontSize: 11, color: "rgba(240,244,255,0.25)" }}>{timeAgo(d.createdAt)}</span>
+                                                        <span style={{ fontSize: 11, color: "rgba(240,244,255,0.25)" }}>·</span>
+                                                        <ReportButton targetType="Post" targetId={d.id} targetUrl={`/discussions`} />
                                                     </div>
                                                 </div>
                                             </div>

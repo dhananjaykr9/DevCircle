@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/../../auth";
+import { auth } from "../../../auth";
 
 export async function updateProfile(formData: FormData) {
     const session = await auth();
@@ -19,8 +19,8 @@ export async function updateProfile(formData: FormData) {
     const skills = formData.get("skills") as string;
     const interests = formData.get("interests") as string;
     const github = formData.get("github") as string;
-    const linkedin = formData.get("linkedin") as string;
     const portfolioUrl = formData.get("portfolioUrl") as string;
+    const image = formData.get("image") as string;
 
     // Checkboxes come through as "on" if checked, otherwise null
     const openToMentoring = formData.get("openToMentoring") === "on";
@@ -37,8 +37,8 @@ export async function updateProfile(formData: FormData) {
             skills: skills || null,
             interests: interests || null,
             github: github || null,
-            linkedin: linkedin || null,
             portfolioUrl: portfolioUrl || null,
+            image: image || null,
             openToMentoring,
             openToCollaborate,
         }

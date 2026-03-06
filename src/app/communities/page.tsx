@@ -8,9 +8,19 @@ export const metadata = {
     description: "Browse all active DevCircle city communities across India. Find your local tech hub and join thousands of professionals and freshers.",
 };
 
-export default async function CommunitiesPage() {
+export default async function CommunitiesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+    const params = await searchParams;
+    const searchQuery = params.q || "";
+
     // Fetch all cities and categorize based on activity level
     const allCities = await prisma.city.findMany({
+        where: searchQuery ? {
+            OR: [
+                { name: { contains: searchQuery } },
+                { state: { contains: searchQuery } },
+                { tags: { contains: searchQuery } },
+            ]
+        } : undefined,
         include: {
             _count: {
                 select: { members: true, posts: true, events: true }
@@ -53,7 +63,7 @@ export default async function CommunitiesPage() {
                     </p>
 
                     {/* Search bar */}
-                    <div style={{ position: "relative", maxWidth: 460 }}>
+                    <form action="/communities" method="get" style={{ position: "relative", maxWidth: 460 }}>
                         <Search
                             size={16}
                             style={{
@@ -66,11 +76,13 @@ export default async function CommunitiesPage() {
                         />
                         <input
                             type="text"
+                            name="q"
+                            defaultValue={searchQuery}
                             placeholder="Search a city..."
                             className="input"
                             style={{ paddingLeft: 40, height: 46 }}
                         />
-                    </div>
+                    </form>
                 </div>
             </section>
 

@@ -3,7 +3,7 @@ import { MapPin, Calendar, Clock, Users, Tag, Filter, Search } from "lucide-reac
 import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";
 import RsvpButton from "@/components/RsvpButton";
-import { auth } from "@/../../auth";
+import { auth } from "../../../auth";
 
 export const metadata = {
     title: "Events — DevCircle",
@@ -18,11 +18,28 @@ const typeColors: Record<string, string> = {
     "Contribution Sprint": "tag-green",
 };
 
-export default async function EventsPage() {
+export default async function EventsPage({ searchParams }: { searchParams: Promise<{ q?: string; city?: string }> }) {
     const session = await auth();
     const userId = session?.user?.id;
+    const params = await searchParams;
+    const searchQuery = params.q || "";
+    const selectedCity = params.city || "";
+
+    // Build filter
+    const where: any = {};
+    if (searchQuery) {
+        where.OR = [
+            { title: { contains: searchQuery } },
+            { description: { contains: searchQuery } },
+            { venue: { contains: searchQuery } },
+        ];
+    }
+    if (selectedCity) {
+        where.city = { name: selectedCity };
+    }
 
     const events = await prisma.event.findMany({
+        where,
         orderBy: { date: 'asc' },
         include: {
             organizer: true,
@@ -36,11 +53,24 @@ export default async function EventsPage() {
         ? (await prisma.rsvp.findMany({ where: { userId }, select: { eventId: true } })).map(r => r.eventId)
         : [];
 
+    // Fetch cities dynamically for filter buttons
+    const cities = await prisma.city.findMany({ where: { isActive: true }, select: { name: true }, orderBy: { name: "asc" } });
+
     const hackNightCount = await prisma.event.count({ where: { type: "Hack Night" } });
     const workshopCount = await prisma.event.count({ where: { type: "Workshop" } });
     const talkCount = await prisma.event.count({ where: { type: "Talk" } });
     const networkingCount = await prisma.event.count({ where: { type: "Networking" } });
     const sprintCount = await prisma.event.count({ where: { type: "Contribution Sprint" } });
+
+    function buildUrl(overrides: Record<string, string>) {
+        const p: Record<string, string> = {};
+        if (searchQuery) p.q = searchQuery;
+        if (selectedCity) p.city = selectedCity;
+        Object.assign(p, overrides);
+        Object.keys(p).forEach(k => { if (!p[k]) delete p[k]; });
+        const qs = new URLSearchParams(p).toString();
+        return `/events${qs ? `?${qs}` : ""}`;
+    }
 
     return (
         <>
@@ -77,27 +107,39 @@ export default async function EventsPage() {
                         <div>
                             {/* Filters */}
                             <div style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
-                                <div style={{ position: "relative", flex: 1, minWidth: 180 }}>
+                                <form action="/events" method="get" style={{ position: "relative", flex: 1, minWidth: 180 }}>
+                                    {selectedCity && <input type="hidden" name="city" value={selectedCity} />}
                                     <Search size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.3)" }} />
-                                    <input className="input" placeholder="Search events..." style={{ paddingLeft: 36 }} />
-                                </div>
-                                {["All Cities", "Nagpur", "Pune", "Hyderabad"].map((c, i) => (
-                                    <button
-                                        key={c}
+                                    <input className="input" name="q" defaultValue={searchQuery} placeholder="Search events..." style={{ paddingLeft: 36 }} />
+                                </form>
+                                <Link
+                                    href={buildUrl({ city: "" })}
+                                    style={{
+                                        padding: "10px 14px", borderRadius: 9, border: "1px solid", fontSize: 13,
+                                        textDecoration: "none",
+                                        background: !selectedCity ? "rgba(249,115,22,0.15)" : "transparent",
+                                        color: !selectedCity ? "#f97316" : "rgba(240,244,255,0.5)",
+                                        borderColor: !selectedCity ? "rgba(249,115,22,0.3)" : "rgba(255,255,255,0.08)",
+                                        fontWeight: !selectedCity ? 500 : 400,
+                                    }}
+                                >
+                                    All Cities
+                                </Link>
+                                {cities.map((c) => (
+                                    <Link
+                                        key={c.name}
+                                        href={buildUrl({ city: c.name })}
                                         style={{
-                                            padding: "10px 14px",
-                                            borderRadius: 9,
-                                            border: "1px solid",
-                                            fontSize: 13,
-                                            cursor: "pointer",
-                                            background: i === 0 ? "rgba(249,115,22,0.15)" : "transparent",
-                                            color: i === 0 ? "#f97316" : "rgba(240,244,255,0.5)",
-                                            borderColor: i === 0 ? "rgba(249,115,22,0.3)" : "rgba(255,255,255,0.08)",
-                                            fontWeight: i === 0 ? 500 : 400,
+                                            padding: "10px 14px", borderRadius: 9, border: "1px solid", fontSize: 13,
+                                            textDecoration: "none",
+                                            background: selectedCity === c.name ? "rgba(249,115,22,0.15)" : "transparent",
+                                            color: selectedCity === c.name ? "#f97316" : "rgba(240,244,255,0.5)",
+                                            borderColor: selectedCity === c.name ? "rgba(249,115,22,0.3)" : "rgba(255,255,255,0.08)",
+                                            fontWeight: selectedCity === c.name ? 500 : 400,
                                         }}
                                     >
-                                        {c}
-                                    </button>
+                                        {c.name}
+                                    </Link>
                                 ))}
                             </div>
 
@@ -173,11 +215,17 @@ export default async function EventsPage() {
 
                                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                                 <span style={{ fontSize: 12, color: "rgba(240,244,255,0.35)" }}>by {ev.organizer.name}</span>
-                                                <RsvpButton
-                                                    eventId={ev.id}
-                                                    initialRsvpd={rsvpdEventIds.includes(ev.id)}
-                                                    isFull={ev._count.rsvps >= ev.capacity}
-                                                />
+                                                {session?.user?.id === ev.organizerId ? (
+                                                    <Link href={`/events/${ev.id}/manage`} className="btn-secondary" style={{ padding: "6px 14px", fontSize: 12, borderRadius: 100 }}>
+                                                        Manage Attendees
+                                                    </Link>
+                                                ) : (
+                                                    <RsvpButton
+                                                        eventId={ev.id}
+                                                        initialRsvpd={rsvpdEventIds.includes(ev.id)}
+                                                        isFull={ev._count.rsvps >= ev.capacity}
+                                                    />
+                                                )}
                                             </div>
                                         </div>
                                     </div>
