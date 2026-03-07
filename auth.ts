@@ -6,25 +6,20 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { PrismaClient } from "@prisma/client"
 import bcrypt from "bcryptjs"
 
+import authConfig from "./auth.config"
+
 const prisma = new PrismaClient()
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+    ...authConfig,
     adapter: PrismaAdapter(prisma) as any,
-    trustHost: true,
     session: {
         strategy: "jwt"
     },
     providers: [
-        GitHub({
-            clientId: process.env.GITHUB_ID,
-            clientSecret: process.env.GITHUB_SECRET,
-            allowDangerousEmailAccountLinking: true,
-        }),
-        Google({
-            clientId: process.env.GOOGLE_ID,
-            clientSecret: process.env.GOOGLE_SECRET,
-            allowDangerousEmailAccountLinking: true,
-        }),
+        // Keep OAuth providers from config
+        ...authConfig.providers.filter((p: any) => p.id !== "credentials"),
+        // Add full Credentials provider with Prisma access
         Credentials({
             name: "Credentials",
             credentials: {
@@ -54,17 +49,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             }
         })
     ],
-    pages: {
-        signIn: '/auth/login',
-        error: '/auth/login',
-    },
     callbacks: {
         async jwt({ token, user, trigger }) {
-            if (user) {
-                token.id = user.id;
-                token.email = user.email;
-                token.onboarded = (user as any).onboarded;
-                token.role = (user as any).role;
+            // First run the edge-compatible JWT callback
+            if (authConfig.callbacks?.jwt) {
+                token = await authConfig.callbacks.jwt({ token, user, trigger } as any);
             }
             // Re-read user data from DB when session is updated or on sign-in
             if (trigger === "update" || trigger === "signIn" || (token.id && !token.onboarded)) {
@@ -81,12 +70,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return token;
         },
         async session({ session, token }) {
-            if (token && session.user) {
-                session.user.id = token.id as string;
-                session.user.email = token.email as string;
-                (session.user as any).onboarded = token.onboarded;
-                (session.user as any).cityId = token.cityId;
-                (session.user as any).role = token.role;
+            // Edge-compatible session callback
+            if (authConfig.callbacks?.session) {
+                session = await authConfig.callbacks.session({ session, token } as any);
             }
             return session;
         },

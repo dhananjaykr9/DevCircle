@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { auth } from "../auth";
+import NextAuth from "next-auth";
+import authConfig from "../auth.config";
+
+const { auth } = NextAuth(authConfig);
 
 // Pages accessible without login (demo / read-only browsing)
 const PUBLIC_PATHS = new Set([
