@@ -36,11 +36,14 @@ export async function registerUser(formData: FormData) {
             password,
             redirectTo: "/onboarding"
         });
-    } catch (error) {
+    } catch (error: any) {
+        if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+            throw error;
+        }
         if (error instanceof AuthError) {
             return { error: "Failed to automatically sign in after registration" };
         }
-        throw error;
+        return { error: "Something went wrong" };
     }
 
     return { success: true };
@@ -60,7 +63,10 @@ export async function loginUser(formData: FormData) {
             password,
             redirectTo: "/feed" // Will be intercepted by middleware if not onboarded
         });
-    } catch (error) {
+    } catch (error: any) {
+        if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+            throw error;
+        }
         if (error instanceof AuthError) {
             switch (error.type) {
                 case "CredentialsSignin":
@@ -69,6 +75,6 @@ export async function loginUser(formData: FormData) {
                     return { error: "Something went wrong" };
             }
         }
-        throw error;
+        return { error: "Something went wrong" };
     }
 }
