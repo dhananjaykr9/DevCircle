@@ -22,10 +22,14 @@ export default function SignupPage() {
             return;
         }
 
-        const res = await registerUser(formData);
-        if (res?.error) {
-            setError(res.error);
-            setIsLoading(false);
+        try {
+            const res = await registerUser(formData);
+            if (res?.error) {
+                setError(res.error);
+                setIsLoading(false);
+            }
+        } catch {
+            // Server action redirect throws — this is expected on success
         }
     }
 

@@ -40,10 +40,15 @@ function LoginForm() {
     async function handleSubmit(formData: FormData) {
         setIsLoading(true);
         setError(null);
-        const res = await loginUser(formData);
-        if (res?.error) {
-            setError(res.error);
-            setIsLoading(false);
+        try {
+            const res = await loginUser(formData);
+            if (res?.error) {
+                setError(res.error);
+                setIsLoading(false);
+            }
+        } catch {
+            // Server action redirect throws — this is expected on success
+            // The page will navigate automatically
         }
     }
 

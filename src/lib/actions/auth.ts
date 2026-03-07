@@ -35,7 +35,7 @@ export async function registerUser(formData: FormData) {
         await signIn("credentials", {
             email,
             password,
-            redirectTo: "/onboarding"
+            redirect: false,
         });
     } catch (error: any) {
         if (error?.digest?.startsWith("NEXT_REDIRECT")) {
@@ -47,7 +47,8 @@ export async function registerUser(formData: FormData) {
         return { error: "Something went wrong" };
     }
 
-    return { success: true };
+    const { redirect } = await import("next/navigation");
+    redirect("/onboarding");
 }
 
 export async function loginUser(formData: FormData) {
@@ -62,7 +63,7 @@ export async function loginUser(formData: FormData) {
         await signIn("credentials", {
             email,
             password,
-            redirectTo: "/feed" // Will be intercepted by middleware if not onboarded
+            redirect: false,
         });
     } catch (error: any) {
         if (error?.digest?.startsWith("NEXT_REDIRECT")) {
@@ -78,6 +79,9 @@ export async function loginUser(formData: FormData) {
         }
         return { error: "Something went wrong" };
     }
+
+    const { redirect } = await import("next/navigation");
+    redirect("/feed");
 }
 
 export async function forgotPassword(formData: FormData) {
