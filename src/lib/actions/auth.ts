@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { signIn } from "../../../auth";
 import { AuthError } from "next-auth";
 
@@ -77,4 +78,103 @@ export async function loginUser(formData: FormData) {
         }
         return { error: "Something went wrong" };
     }
+}
+
+export async function forgotPassword(formData: FormData) {
+    const email = formData.get("email") as string;
+
+    if (!email) {
+        return { error: "Email is required" };
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || !user.hashedPassword) {
+        // Don't reveal whether email exists
+        return { success: true };
+    }
+
+    // Delete any existing reset tokens for this email
+    await prisma.passwordResetToken.deleteMany({ where: { email } });
+
+    const token = crypto.randomUUID();
+    const expires = new Date(Date.now() + 3600000); // 1 hour
+
+    await prisma.passwordResetToken.create({
+        data: { email, token, expires },
+    });
+
+    // Build the reset URL
+    const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000";
+    const resetUrl = `${baseUrl}/auth/reset-password?token=${token}`;
+
+    // Try sending email via nodemailer if SMTP is configured
+    if (process.env.SMTP_EMAIL && process.env.SMTP_PASSWORD) {
+        try {
+            const nodemailer = require("nodemailer");
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.SMTP_EMAIL,
+                    pass: process.env.SMTP_PASSWORD,
+                },
+            });
+
+            await transporter.sendMail({
+                from: process.env.SMTP_EMAIL,
+                to: email,
+                subject: "DevCircle - Reset Your Password",
+                html: `
+                    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+                        <h2>Reset Your Password</h2>
+                        <p>Click the link below to reset your password. This link expires in 1 hour.</p>
+                        <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px;">Reset Password</a>
+                        <p style="margin-top: 16px; color: #666; font-size: 13px;">If you didn't request this, you can ignore this email.</p>
+                    </div>
+                `,
+            });
+        } catch {
+            // Email send failed — still return success to avoid leaking info
+        }
+    }
+
+    return { success: true, resetUrl: !process.env.SMTP_EMAIL ? resetUrl : undefined };
+}
+
+export async function resetPassword(formData: FormData) {
+    const token = formData.get("token") as string;
+    const password = formData.get("password") as string;
+
+    if (!token || !password) {
+        return { error: "Missing required fields" };
+    }
+
+    if (password.length < 6) {
+        return { error: "Password must be at least 6 characters" };
+    }
+
+    const resetToken = await prisma.passwordResetToken.findUnique({
+        where: { token },
+    });
+
+    if (!resetToken) {
+        return { error: "Invalid or expired reset link" };
+    }
+
+    if (new Date() > resetToken.expires) {
+        await prisma.passwordResetToken.delete({ where: { token } });
+        return { error: "Reset link has expired. Please request a new one." };
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.update({
+        where: { email: resetToken.email },
+        data: { hashedPassword },
+    });
+
+    await prisma.passwordResetToken.delete({ where: { token } });
+
+    return { success: true };
 }

@@ -81,7 +81,7 @@ function LoginForm() {
                     </div>
 
                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        <a href="#" style={{ fontSize: 12, color: "#8b5cf6", textDecoration: "none" }}>Forgot Password?</a>
+                        <Link href="/auth/forgot-password" style={{ fontSize: 12, color: "#8b5cf6", textDecoration: "none" }}>Forgot Password?</Link>
                     </div>
 
                     <button type="submit" className="btn-primary" disabled={isLoading} style={{ width: "100%", justifyContent: "center", marginTop: 8 }}>
