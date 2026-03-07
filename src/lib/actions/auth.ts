@@ -88,9 +88,13 @@ export async function forgotPassword(formData: FormData) {
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user || !user.hashedPassword) {
+    if (!user) {
         // Don't reveal whether email exists
-        return { success: true };
+        return { success: true, message: "If an account with that email exists, a password reset link has been generated." };
+    }
+
+    if (!user.hashedPassword) {
+        return { error: "This account uses Google or GitHub sign-in. Please use that method to log in." };
     }
 
     // Delete any existing reset tokens for this email
@@ -104,9 +108,8 @@ export async function forgotPassword(formData: FormData) {
     });
 
     // Build the reset URL
-    const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000";
+    const baseUrl = process.env.NEXTAUTH_URL
+        || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
     const resetUrl = `${baseUrl}/auth/reset-password?token=${token}`;
 
     // Try sending email via nodemailer if SMTP is configured
@@ -139,7 +142,8 @@ export async function forgotPassword(formData: FormData) {
         }
     }
 
-    return { success: true, resetUrl: !process.env.SMTP_EMAIL ? resetUrl : undefined };
+    const emailSent = !!(process.env.SMTP_EMAIL && process.env.SMTP_PASSWORD);
+    return { success: true, resetUrl: !emailSent ? resetUrl : undefined };
 }
 
 export async function resetPassword(formData: FormData) {
