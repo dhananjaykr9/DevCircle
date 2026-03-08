@@ -40,7 +40,7 @@ export default function MentorRequestForm({ mentorId, mentorName }: Props) {
         return (
             <div style={{ fontSize: 13, color: "#34d399", fontWeight: 500, padding: "10px 14px", borderRadius: 8, background: "rgba(16,185,129,0.1)", textAlign: "center", lineHeight: 1.5 }}>
                 ✓ Request sent to {mentorName.split(" ")[0]}!<br />
-                <span style={{ color: "rgba(240,244,255,0.4)", fontWeight: 400, fontSize: 12 }}>They'll review your request soon.</span>
+                <span style={{ color: "rgba(240,244,255,0.4)", fontWeight: 400, fontSize: 12 }}>They&apos;ll review your request soon.</span>
             </div>
         );
     }

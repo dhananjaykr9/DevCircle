@@ -2,8 +2,9 @@ import prisma from "@/lib/prisma";
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import Footer from "@/components/Footer";
-import { User, Bell, Shield, Github, LogOut, ChevronRight, Chrome } from "lucide-react";
+import { User, Bell, Shield, Github, LogOut, Chrome } from "lucide-react";
 
 export const metadata = {
     title: "Settings — DevCircle",
@@ -81,7 +82,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", background: "rgba(255,255,255,0.02)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.05)" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                                             <div style={{ width: 48, height: 48, borderRadius: "50%", background: "linear-gradient(135deg, #8b5cf6, #6d28d9)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "white" }}>
-                                                {session.user.image ? <img src={session.user.image} style={{ width: '100%', height: '100%', borderRadius: "50%" }} /> : (session.user.name?.[0] || "U")}
+                                                {session.user.image ? <Image src={session.user.image} alt={session.user.name || "User"} width={48} height={48} unoptimized style={{ borderRadius: "50%" }} /> : (session.user.name?.[0] || "U")}
                                             </div>
                                             <div>
                                                 <div style={{ fontSize: 15, fontWeight: 600, color: "#f0f4ff" }}>{session.user.name}</div>

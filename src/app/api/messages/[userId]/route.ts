@@ -4,7 +4,6 @@ import { auth } from "../../../../../auth";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
-        const { userId } = await params;
         const session = await auth();
         if (!session?.user?.id) {
             return new NextResponse("Unauthorized", { status: 401 });

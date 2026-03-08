@@ -1,8 +1,10 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import Footer from "@/components/Footer";
-import { Search, MapPin, Briefcase, Code, Award, SlidersHorizontal, User, Sparkles } from "lucide-react";
+import { Search, MapPin, Briefcase, SlidersHorizontal, User, Sparkles } from "lucide-react";
 import { auth } from "../../../auth";
+import { MockUsers } from "@/lib/mock-data";
 
 export const metadata = {
     title: "Network | DevCircle",
@@ -38,7 +40,7 @@ export default async function NetworkPage({
     if (isCollab) whereClause.openToCollaborate = true;
 
     // Fetch filtered users
-    const users = await prisma.user.findMany({
+    let users = await prisma.user.findMany({
         where: whereClause,
         orderBy: { reputation: "desc" },
         include: { city: true },
@@ -46,6 +48,17 @@ export default async function NetworkPage({
     });
 
     const session = await auth();
+
+    if (!session?.user?.id) {
+        users = MockUsers.filter(u => {
+            if (query && !u.name.toLowerCase().includes(query.toLowerCase()) && !u.skills.toLowerCase().includes(query.toLowerCase()) && !u.jobTitle.toLowerCase().includes(query.toLowerCase())) return false;
+            if (cityId && u.cityId !== cityId) return false;
+            if (experienceLevel && u.experienceLevel !== experienceLevel) return false;
+            if (isMentor && !u.openToMentoring) return false;
+            if (isCollab && !u.openToCollaborate) return false;
+            return true;
+        }) as unknown as typeof users;
+    }
     let recommendedUsers: any[] = [];
     const isFiltered = query || cityId || experienceLevel || isMentor || isCollab;
 
@@ -85,12 +98,12 @@ export default async function NetworkPage({
             <header className="hero-gradient grid-bg" style={{ padding: "60px 0 40px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                 <div className="container">
                     <div className="fade-in-up">
-                    <h1 style={{ fontSize: 36, fontWeight: 800, color: "#f0f4ff", marginBottom: 12, fontFamily: "'Space Grotesk', sans-serif" }}>
-                        Developer Network
-                    </h1>
-                    <p style={{ fontSize: 16, color: "rgba(240,244,255,0.6)", maxWidth: 600, lineHeight: 1.6 }}>
-                        Discover and connect with professionals and freshers across the ecosystem. Find mentors, team up for projects, and build your local tech network.
-                    </p>
+                        <h1 style={{ fontSize: 36, fontWeight: 800, color: "#f0f4ff", marginBottom: 12, fontFamily: "'Space Grotesk', sans-serif" }}>
+                            Developer Network
+                        </h1>
+                        <p style={{ fontSize: 16, color: "rgba(240,244,255,0.6)", maxWidth: 600, lineHeight: 1.6 }}>
+                            Discover and connect with professionals and freshers across the ecosystem. Find mentors, team up for projects, and build your local tech network.
+                        </p>
                     </div>
                 </div>
             </header>
@@ -188,7 +201,7 @@ export default async function NetworkPage({
                                                 <Link href={`/members/${u.id}`} key={"rec_" + u.id} style={{ textDecoration: "none" }}>
                                                     <div className="glass-card" style={{ padding: 16, display: "flex", alignItems: "center", gap: 16, border: "1px solid rgba(139,92,246,0.2)", background: "linear-gradient(135deg, rgba(139,92,246,0.05), rgba(139,92,246,0.02))", transition: "transform 0.2s" }}
                                                     >
-                                                        <img src={avatar} alt={u.name || "User"} style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover" }} />
+                                                        <Image src={avatar} alt={u.name || "User"} width={48} height={48} unoptimized style={{ borderRadius: "50%", objectFit: "cover" }} />
                                                         <div>
                                                             <h3 style={{ fontSize: 15, fontWeight: 600, color: "#f0f4ff", marginBottom: 2 }}>{u.name || "Anonymous"}</h3>
                                                             <div style={{ fontSize: 12, color: "#c4b5fd", fontWeight: 500, marginBottom: 4 }}>
@@ -226,7 +239,7 @@ export default async function NetworkPage({
                                                 <div className="glass-card" style={{ padding: 20, height: "100%", display: "flex", flexDirection: "column", transition: "transform 0.2s, background 0.2s" }}
                                                 >
                                                     <div style={{ display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 16 }}>
-                                                        <img src={avatar} alt={u.name || "User"} style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover" }} />
+                                                        <Image src={avatar} alt={u.name || "User"} width={56} height={56} unoptimized style={{ borderRadius: "50%", objectFit: "cover" }} />
                                                         <div>
                                                             <h3 style={{ fontSize: 16, fontWeight: 600, color: "#f0f4ff", marginBottom: 4 }}>{u.name || "Anonymous"}</h3>
                                                             <div style={{ fontSize: 13, color: "rgba(240,244,255,0.6)", display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>

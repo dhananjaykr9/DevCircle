@@ -2,7 +2,7 @@ import { auth } from "../../../auth";
 import prisma from "@/lib/prisma";
 import Footer from "@/components/Footer";
 import ProposalVoteButton from "@/components/ProposalVoteButton";
-import { Vote, Plus, Users, Landmark } from "lucide-react";
+import { Vote, Plus, Landmark } from "lucide-react";
 import { createProposal } from "@/lib/actions/governance";
 
 export const metadata = {

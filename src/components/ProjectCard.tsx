@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Users, ExternalLink, Github } from "lucide-react";
+import ApplyProjectButton from "./ApplyProjectButton";
 
 const typeColors: Record<string, string> = {
     "Open Source": "tag-green",
@@ -13,7 +15,7 @@ const statusColors: Record<string, { bg: string; color: string }> = {
     Ideation: { bg: "rgba(139,92,246,0.12)", color: "#a78bfa" },
 };
 
-export default function ProjectCard({ project, currentUserId }: { project: any, currentUserId?: string }) {
+export default function ProjectCard({ project }: { project: any }) {
     const status = statusColors[project.status] || statusColors.Active;
 
     return (
@@ -72,7 +74,7 @@ export default function ProjectCard({ project, currentUserId }: { project: any, 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Link href={`/members/${project.authorId}`} style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
                     {project.author?.image ? (
-                        <img src={project.author.image} alt={project.author.name} style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover" }} />
+                        <Image src={project.author.image} alt={project.author.name} width={28} height={28} unoptimized style={{ borderRadius: "50%", objectFit: "cover" }} />
                     ) : (
                         <div
                             style={{
@@ -104,9 +106,7 @@ export default function ProjectCard({ project, currentUserId }: { project: any, 
                         View Repo <ExternalLink size={12} />
                     </a>
                 ) : (
-                    <button className="btn-primary" style={{ padding: "8px 16px", fontSize: 12, borderRadius: 9, display: "inline-flex", gap: 6 }}>
-                        Apply <ExternalLink size={12} />
-                    </button>
+                    <ApplyProjectButton projectId={project.id} authorId={project.authorId} projectTitle={project.title} />
                 )}
             </div>
         </div>

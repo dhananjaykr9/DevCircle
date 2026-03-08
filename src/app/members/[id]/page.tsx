@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Briefcase, Star, Award, Users, MessageSquare, Code, ArrowRight, ExternalLink } from "lucide-react";
 import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";
@@ -61,10 +62,13 @@ export default async function MemberProfilePage({ params }: { params: Promise<{ 
                 <div className="container" style={{ position: "relative", zIndex: 2, paddingBottom: 40 }}>
                     <div style={{ display: "flex", gap: 28, alignItems: "flex-start", flexWrap: "wrap" }}>
                         {/* Avatar */}
-                        <img
+                        <Image
                             src={member.image || `https://ui-avatars.com/api/?name=${member.name || "U"}&background=8b5cf6&color=fff&size=120`}
                             alt={member.name || "Member"}
-                            style={{ width: 100, height: 100, borderRadius: "50%", border: "3px solid rgba(139,92,246,0.4)", objectFit: "cover", flexShrink: 0 }}
+                            width={100}
+                            height={100}
+                            unoptimized
+                            style={{ borderRadius: "50%", border: "3px solid rgba(139,92,246,0.4)", objectFit: "cover", flexShrink: 0 }}
                         />
                         {/* Info */}
                         <div style={{ flex: 1, minWidth: 200 }}>

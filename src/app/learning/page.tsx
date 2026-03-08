@@ -1,7 +1,7 @@
 import { auth } from "../../../auth";
 import prisma from "@/lib/prisma";
 import Footer from "@/components/Footer";
-import { BookOpen, Link as LinkIcon, Plus, Lightbulb, Search, BookMarked, MonitorPlay } from "lucide-react";
+import { BookOpen, Link as LinkIcon, Plus, Lightbulb, BookMarked, MonitorPlay } from "lucide-react";
 import Link from "next/link";
 import { submitResource } from "@/lib/actions/learning";
 

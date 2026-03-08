@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageSquare, Eye, Star, Plus, Search, Filter } from "lucide-react";
+import { MessageSquare, Star, Plus, Search } from "lucide-react";
 import { categories } from "@/lib/data";
 import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";

@@ -3,7 +3,7 @@ import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Footer from "@/components/Footer";
-import { Bell, MessageSquare, Calendar, Users, Briefcase, CheckCircle2 } from "lucide-react";
+import { Bell, MessageSquare, Calendar, Users, CheckCircle2 } from "lucide-react";
 import { markAllNotificationsAsRead, markNotificationAsRead } from "@/lib/actions/notifications";
 
 export const metadata = {
@@ -67,7 +67,7 @@ export default async function NotificationsPage() {
                             <div className="glass-card" style={{ padding: 60, textAlign: "center" }}>
                                 <Bell size={40} style={{ margin: "0 auto 16px", opacity: 0.2 }} color="#f0f4ff" />
                                 <h3 style={{ fontSize: 18, color: "#f0f4ff", margin: "0 0 8px 0" }}>All caught up!</h3>
-                                <p style={{ fontSize: 14, color: "rgba(240,244,255,0.5)", margin: 0 }}>You don't have any notifications yet.</p>
+                                <p style={{ fontSize: 14, color: "rgba(240,244,255,0.5)", margin: 0 }}>You don&apos;t have any notifications yet.</p>
                             </div>
                         ) : notifications.map(notif => (
                             <div key={notif.id} className="glass-card" style={{

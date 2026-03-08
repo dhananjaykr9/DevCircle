@@ -30,7 +30,7 @@ export async function completeOnboarding(formData: FormData) {
             }
         });
         return { success: true };
-    } catch (e) {
+    } catch {
         return { error: "Failed to save profile data" };
     }
 }

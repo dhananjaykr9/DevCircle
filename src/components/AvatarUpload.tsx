@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { Camera, Loader2, X } from "lucide-react";
 
 interface AvatarUploadProps {
@@ -92,7 +93,7 @@ export default function AvatarUpload({ currentImage, userName }: AvatarUploadPro
                         onClick={() => !uploading && fileRef.current?.click()}
                     >
                         {preview ? (
-                            <img src={preview} alt={userName || "Avatar"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            <Image src={preview} alt={userName || "Avatar"} width={88} height={88} unoptimized style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         ) : (
                             <div style={{
                                 width: "100%", height: "100%",

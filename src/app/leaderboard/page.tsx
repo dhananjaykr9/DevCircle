@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import Footer from "@/components/Footer";
+import Image from "next/image";
 import { Trophy, Medal, Star, Award } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -61,7 +62,7 @@ export default async function LeaderboardPage() {
                                     <Link key={u.id} href={`/members/${u.id}`} style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", width: rank === 1 ? 200 : 160 }}>
                                         <div style={{ position: "relative", marginBottom: 12 }}>
                                             {u.image ? (
-                                                <img src={u.image} alt={u.name || "User"} style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover", border: `3px solid ${c.border}`, boxShadow: `0 0 20px ${c.bg}` }} />
+                                                <Image src={u.image} alt={u.name || "User"} width={size} height={size} unoptimized style={{ borderRadius: "50%", objectFit: "cover", border: `3px solid ${c.border}`, boxShadow: `0 0 20px ${c.bg}` }} />
                                             ) : (
                                                 <div style={{ width: size, height: size, borderRadius: "50%", background: "linear-gradient(135deg, #8b5cf6, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "bold", fontSize: rank === 1 ? 28 : 22, border: `3px solid ${c.border}`, boxShadow: `0 0 20px ${c.bg}` }}>
                                                     {u.name?.charAt(0).toUpperCase() || "U"}
@@ -141,7 +142,7 @@ export default async function LeaderboardPage() {
                                             {/* User Info */}
                                             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                                                 {user.image ? (
-                                                    <img src={user.image} alt={user.name || "User"} style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: rank === 1 ? "2px solid #fbbf24" : "none" }} />
+                                                    <Image src={user.image} alt={user.name || "User"} width={48} height={48} unoptimized style={{ borderRadius: "50%", objectFit: "cover", border: rank === 1 ? "2px solid #fbbf24" : "none" }} />
                                                 ) : (
                                                     <div style={{ width: 48, height: 48, borderRadius: "50%", background: "linear-gradient(135deg, #8b5cf6, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "bold", fontSize: 18, border: rank === 1 ? "2px solid #fbbf24" : "none" }}>
                                                         {user.name?.charAt(0).toUpperCase() || "U"}

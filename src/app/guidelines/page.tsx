@@ -148,7 +148,7 @@ export default function GuidelinesPage() {
                                     {/* Don'ts */}
                                     <div>
                                         <div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-                                            <AlertTriangle size={14} /> Don't
+                                            <AlertTriangle size={14} /> Don&apos;t
                                         </div>
                                         <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10, margin: 0, padding: 0 }}>
                                             {g.donts.map(d => (

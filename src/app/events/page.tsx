@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { MapPin, Calendar, Clock, Users, Tag, Filter, Search } from "lucide-react";
+import { MapPin, Clock, Users, Search } from "lucide-react";
 import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";
 import RsvpButton from "@/components/RsvpButton";
 import { auth } from "../../../auth";
+import { MockEvents } from "@/lib/mock-data";
 
 export const metadata = {
     title: "Events — DevCircle",
@@ -38,7 +39,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
         where.city = { name: selectedCity };
     }
 
-    const events = await prisma.event.findMany({
+    let events = await prisma.event.findMany({
         where,
         orderBy: { date: 'asc' },
         include: {
@@ -56,11 +57,24 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
     // Fetch cities dynamically for filter buttons
     const cities = await prisma.city.findMany({ where: { isActive: true }, select: { name: true }, orderBy: { name: "asc" } });
 
-    const hackNightCount = await prisma.event.count({ where: { type: "Hack Night" } });
-    const workshopCount = await prisma.event.count({ where: { type: "Workshop" } });
-    const talkCount = await prisma.event.count({ where: { type: "Talk" } });
-    const networkingCount = await prisma.event.count({ where: { type: "Networking" } });
-    const sprintCount = await prisma.event.count({ where: { type: "Contribution Sprint" } });
+    let hackNightCount = await prisma.event.count({ where: { type: "Hack Night" } });
+    let workshopCount = await prisma.event.count({ where: { type: "Workshop" } });
+    let talkCount = await prisma.event.count({ where: { type: "Talk" } });
+    let networkingCount = await prisma.event.count({ where: { type: "Networking" } });
+    let sprintCount = await prisma.event.count({ where: { type: "Contribution Sprint" } });
+
+    if (!userId) {
+        events = MockEvents.filter(ev => {
+            if (searchQuery && !ev.title.includes(searchQuery) && !ev.description.includes(searchQuery) && !ev.venue.includes(searchQuery)) return false;
+            if (selectedCity && ev.city.name !== selectedCity) return false;
+            return true;
+        }) as unknown as typeof events;
+        hackNightCount = MockEvents.filter(ev => ev.type === "Hack Night").length;
+        workshopCount = MockEvents.filter(ev => ev.type === "Workshop").length;
+        talkCount = MockEvents.filter(ev => ev.type === "Talk").length;
+        networkingCount = MockEvents.filter(ev => ev.type === "Networking").length;
+        sprintCount = MockEvents.filter(ev => ev.type === "Contribution Sprint").length;
+    }
 
     function buildUrl(overrides: Record<string, string>) {
         const p: Record<string, string> = {};

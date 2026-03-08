@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { Send, User as UserIcon } from "lucide-react";
 import { sendMessage } from "@/lib/actions/messages";
 
@@ -113,7 +114,7 @@ export default function ChatThread({
             {/* Header */}
             <div style={{ padding: "16px 24px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,0.01)" }}>
                 {otherUserAvatar ? (
-                    <img src={otherUserAvatar} alt={otherUserName} style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }} />
+                    <Image src={otherUserAvatar} alt={otherUserName} width={40} height={40} unoptimized style={{ borderRadius: "50%", objectFit: "cover" }} />
                 ) : (
                     <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, #8b5cf6, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "bold" }}>
                         {otherUserName.charAt(0).toUpperCase()}
@@ -139,7 +140,7 @@ export default function ChatThread({
                                 {!isMe && (
                                     <div style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", flexShrink: 0, marginTop: "auto" }}>
                                         {msg.sender.image ? (
-                                            <img src={msg.sender.image} alt={msg.sender.name || "User"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                            <Image src={msg.sender.image} alt={msg.sender.name || "User"} width={32} height={32} unoptimized style={{ borderRadius: "50%", objectFit: "cover" }} />
                                         ) : (
                                             <div style={{ width: "100%", height: "100%", background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                 <UserIcon size={14} color="#a78bfa" />

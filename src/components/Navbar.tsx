@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
@@ -61,7 +62,9 @@ export default function Navbar() {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [moreOpen, setMoreOpen] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
     const moreRef = useRef<HTMLDivElement>(null);
+    const profileRef = useRef<HTMLDivElement>(null);
     const { data: session, status } = useSession();
 
     const isLoggedIn = !!session?.user;
@@ -72,13 +75,14 @@ export default function Navbar() {
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
             if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
+            if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false);
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     // Close mobile menu on route change
-    useEffect(() => { setMobileOpen(false); setMoreOpen(false); }, [pathname]);
+    useEffect(() => { setMobileOpen(false); setMoreOpen(false); setProfileOpen(false); }, [pathname]);
 
     const visiblePrimary = primaryLinks.filter(l => !l.authOnly || isLoggedIn);
     const visibleSections = moreMenuSections
@@ -91,10 +95,9 @@ export default function Navbar() {
     /* shared link style */
     const linkStyle = (active: boolean): React.CSSProperties => ({
         padding: "8px 12px",
-        borderRadius: 8,
         textDecoration: "none",
         fontSize: 13,
-        fontWeight: 500,
+        fontWeight: active ? 600 : 500,
         color: active ? "#f97316" : "rgba(240,244,255,0.75)",
         background: active ? "rgba(249,115,22,0.1)" : "transparent",
         transition: "all 0.2s",
@@ -102,8 +105,10 @@ export default function Navbar() {
         alignItems: "center",
         gap: 6,
         whiteSpace: "nowrap" as const,
+        position: "relative" as const,
+        borderBottom: active ? "2px solid #f97316" : "2px solid transparent",
+        borderRadius: active ? "8px 8px 0 0" : "8px",
     });
-
     return (
         <nav
             style={{
@@ -122,17 +127,23 @@ export default function Navbar() {
             >
                 {/* ── Logo ─────────────────────────────────── */}
                 <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                    <img
+                    <Image
                         src="/images/logo.png"
                         alt="DevCircle"
                         className="show-mobile-only"
-                        style={{ width: 34, height: 34, objectFit: "contain", borderRadius: 10 }}
+                        width={34}
+                        height={34}
+                        unoptimized
+                        style={{ objectFit: "contain", borderRadius: 10 }}
                     />
-                    <img
+                    <Image
                         src="/images/logo.png"
                         alt="DevCircle"
                         className="hidden-mobile"
-                        style={{ height: 32, objectFit: "contain", borderRadius: 10 }}
+                        width={32}
+                        height={32}
+                        unoptimized
+                        style={{ height: "32px", width: "32px", objectFit: "contain", borderRadius: 10 }}
                     />
                 </Link>
 
@@ -264,8 +275,10 @@ export default function Navbar() {
                         <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
                     ) : session?.user ? (
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <Link href="/notifications" style={{ textDecoration: "none", color: "rgba(240,244,255,0.55)", display: "flex" }}>
+                            <Link href="/notifications" style={{ textDecoration: "none", color: "rgba(240,244,255,0.55)", display: "flex", position: "relative" }}>
                                 <Bell size={19} />
+                                {/* Notification badge */}
+                                <span style={{ position: "absolute", top: -3, right: -3, width: 8, height: 8, background: "#ef4444", borderRadius: "50%", border: "1.5px solid rgba(8,11,20,1)" }} />
                             </Link>
                             <Link href="/messages" className="hidden-mobile" style={{ textDecoration: "none", color: "rgba(240,244,255,0.55)", display: "flex" }}>
                                 <MessageSquare size={19} />
@@ -273,27 +286,86 @@ export default function Navbar() {
                             <Link href="/settings" className="hidden-mobile" style={{ textDecoration: "none", color: "rgba(240,244,255,0.55)", display: "flex" }}>
                                 <Settings size={19} />
                             </Link>
-                            <Link href="/profile" style={{ textDecoration: "none" }}>
-                                {session.user.image ? (
-                                    <img
-                                        src={session.user.image}
-                                        alt={session.user.name || "User"}
-                                        style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid rgba(249,115,22,0.4)", objectFit: "cover" }}
-                                    />
-                                ) : (
-                                    <div
-                                        style={{
-                                            width: 32, height: 32, borderRadius: "50%",
-                                            background: "linear-gradient(135deg, #f97316, #ea580c)",
-                                            display: "flex", alignItems: "center", justifyContent: "center",
-                                            fontSize: 12, fontWeight: 700, color: "white",
-                                            border: "2px solid rgba(249,115,22,0.4)",
-                                        }}
-                                    >
-                                        {session.user.name?.substring(0, 2).toUpperCase() || "U"}
-                                    </div>
-                                )}
-                            </Link>
+                            {/* Avatar with dropdown */}
+                            <div ref={profileRef} style={{ position: "relative" }}>
+                                <button
+                                    onClick={() => setProfileOpen(o => !o)}
+                                    style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", gap: 6 }}
+                                >
+                                    {session.user.image ? (
+                                        <Image
+                                            src={session.user.image}
+                                            alt={session.user.name || "User"}
+                                            width={32}
+                                            height={32}
+                                            unoptimized
+                                            style={{ borderRadius: "50%", border: profileOpen ? "2px solid #f97316" : "2px solid rgba(249,115,22,0.4)", objectFit: "cover", transition: "border 0.2s" }}
+                                        />
+                                    ) : (
+                                        <div
+                                            style={{
+                                                width: 32, height: 32, borderRadius: "50%",
+                                                background: "linear-gradient(135deg, #f97316, #ea580c)",
+                                                display: "flex", alignItems: "center", justifyContent: "center",
+                                                fontSize: 12, fontWeight: 700, color: "white",
+                                                border: profileOpen ? "2px solid #f97316" : "2px solid rgba(249,115,22,0.4)",
+                                                transition: "border 0.2s",
+                                            }}
+                                        >
+                                            {session.user.name?.substring(0, 2).toUpperCase() || "U"}
+                                        </div>
+                                    )}
+                                    <ChevronDown size={13} style={{ color: "rgba(240,244,255,0.4)", transform: profileOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+                                </button>
+
+                                <AnimatePresence>
+                                    {profileOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                                            transition={{ duration: 0.15 }}
+                                            style={{
+                                                position: "absolute", top: "calc(100% + 10px)", right: 0,
+                                                background: "rgba(10,14,28,0.98)",
+                                                border: "1px solid rgba(255,255,255,0.08)",
+                                                borderRadius: 14, padding: 6, minWidth: 200,
+                                                boxShadow: "0 12px 40px rgba(0,0,0,0.6)",
+                                                backdropFilter: "blur(24px)",
+                                                zIndex: 120,
+                                            }}
+                                        >
+                                            {/* User info header */}
+                                            <div style={{ padding: "10px 14px 8px", borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: 4 }}>
+                                                <div style={{ fontWeight: 600, fontSize: 13, color: "#f0f4ff" }}>{session.user.name}</div>
+                                                <div style={{ fontSize: 11, color: "rgba(240,244,255,0.4)", marginTop: 2 }}>{session.user.email}</div>
+                                            </div>
+                                            <Link href="/profile" className="nav-dropdown-item" onClick={() => setProfileOpen(false)}
+                                                style={{ padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 13, fontWeight: 500, color: "rgba(240,244,255,0.7)", display: "flex", alignItems: "center", gap: 9 }}>
+                                                <Users size={15} style={{ opacity: 0.6 }} /> My Profile
+                                            </Link>
+                                            <Link href="/settings" className="nav-dropdown-item" onClick={() => setProfileOpen(false)}
+                                                style={{ padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 13, fontWeight: 500, color: "rgba(240,244,255,0.7)", display: "flex", alignItems: "center", gap: 9 }}>
+                                                <Settings size={15} style={{ opacity: 0.6 }} /> Settings
+                                            </Link>
+                                            {isMod && (
+                                                <Link href="/moderation" className="nav-dropdown-item" onClick={() => setProfileOpen(false)}
+                                                    style={{ padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 13, fontWeight: 600, color: "#f59e0b", display: "flex", alignItems: "center", gap: 9 }}>
+                                                    <Shield size={15} /> Mod Tools
+                                                </Link>
+                                            )}
+                                            <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "4px 8px" }} />
+                                            <button
+                                                onClick={() => signOut()}
+                                                className="nav-dropdown-item"
+                                                style={{ width: "100%", padding: "9px 14px", borderRadius: 8, border: "none", background: "none", cursor: "pointer", fontSize: 13, fontWeight: 500, color: "#ef4444", display: "flex", alignItems: "center", gap: 9, textAlign: "left" }}
+                                            >
+                                                <LogOut size={15} style={{ opacity: 0.8 }} /> Log Out
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </div>
                     ) : (
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -361,7 +433,7 @@ export default function Navbar() {
                                     marginBottom: 20,
                                 }}>
                                     {session.user.image ? (
-                                        <img src={session.user.image} alt="" style={{ width: 38, height: 38, borderRadius: "50%", objectFit: "cover" }} />
+                                        <Image src={session.user.image} alt="" width={38} height={38} unoptimized style={{ borderRadius: "50%", objectFit: "cover" }} />
                                     ) : (
                                         <div style={{ width: 38, height: 38, borderRadius: "50%", background: "linear-gradient(135deg,#f97316,#ea580c)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, color: "white", fontSize: 13 }}>
                                             {session.user.name?.substring(0, 2).toUpperCase() || "U"}
@@ -498,8 +570,16 @@ export default function Navbar() {
                 }
 
                 .nav-dropdown-item:hover {
-                    background: rgba(255,255,255,0.05);
+                    background: rgba(255,255,255,0.05) !important;
                     color: #f0f4ff !important;
+                }
+
+                .nav-link-item {
+                    transition: color 0.2s, background 0.2s;
+                }
+                .nav-link-item:hover {
+                    color: #f0f4ff !important;
+                    background: rgba(255,255,255,0.05) !important;
                 }
             `}</style>
         </nav>

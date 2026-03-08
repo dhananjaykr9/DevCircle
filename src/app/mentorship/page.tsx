@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "../../../auth";
 import Link from "next/link";
+import Image from "next/image";
 import Footer from "@/components/Footer";
 import { Search, MapPin, Briefcase, GraduationCap, Users } from "lucide-react";
 import { toggleMentorStatus } from "@/lib/actions/mentorship";
@@ -105,7 +106,7 @@ export default async function MentorshipPage() {
                             <div key={mentor.id} className="glass-card" style={{ padding: 24, display: "flex", flexDirection: "column" }}>
                                 <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
                                     <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg, #8b5cf6, #6d28d9)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700, color: "white", flexShrink: 0 }}>
-                                        {mentor.image ? <img src={mentor.image} style={{ width: '100%', height: '100%', borderRadius: "50%" }} /> : (mentor.name?.[0] || "?")}
+                                        {mentor.image ? <Image src={mentor.image} alt={mentor.name || "Mentor"} width={56} height={56} unoptimized style={{ borderRadius: "50%", objectFit: "cover" }} /> : (mentor.name?.[0] || "?")}
                                     </div>
                                     <div>
                                         <h3 style={{ fontSize: 18, fontWeight: 700, color: "#f0f4ff", margin: "0 0 4px 0" }}>{mentor.name}</h3>

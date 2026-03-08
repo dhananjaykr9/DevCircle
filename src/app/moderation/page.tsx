@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import Footer from "@/components/Footer";
 import { Shield, ShieldAlert, CheckCircle, Trash2, ExternalLink } from "lucide-react";
 import { redirect } from "next/navigation";
-import Link from "next/link";
+// Remove Link
 import { resolveReport } from "@/lib/actions/moderation";
 
 export const metadata = {
@@ -89,7 +89,7 @@ export default async function ModerationPage() {
                                                     )}
                                                 </div>
                                                 <h3 style={{ fontSize: 15, fontWeight: 500, color: "#f0f4ff", margin: 0, lineHeight: 1.5 }}>
-                                                    "{report.reason}"
+                                                    &quot;{report.reason}&quot;
                                                 </h3>
                                             </div>
                                             {report.targetUrl && (

@@ -1,0 +1,2 @@
+﻿src/app/open-source/page.tsx(99,88): error TS2322: Type '{ key: string; project: any; currentUserId: string | undefined; }' is not assignable to type 'IntrinsicAttributes & { project: any; }'.
+  Property 'currentUserId' does not exist on type 'IntrinsicAttributes & { project: any; }'.

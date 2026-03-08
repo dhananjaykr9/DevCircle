@@ -78,7 +78,7 @@ export default async function ManageEventPage({ params }: { params: { id: string
                         {event.rsvps.length === 0 ? (
                             <div className="glass-card" style={{ padding: 40, textAlign: "center" }}>
                                 <Users size={40} style={{ margin: "0 auto 16px", opacity: 0.2 }} color="#f0f4ff" />
-                                <p style={{ fontSize: 14, color: "rgba(240,244,255,0.5)", margin: 0 }}>No one has RSVP'd yet.</p>
+                                <p style={{ fontSize: 14, color: "rgba(240,244,255,0.5)", margin: 0 }}>No one has RSVP&apos;d yet.</p>
                             </div>
                         ) : (
                             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -96,7 +96,7 @@ export default async function ManageEventPage({ params }: { params: { id: string
                                             </div>
                                         </div>
                                         <span style={{ fontSize: 11, color: "rgba(240,244,255,0.3)", background: "rgba(255,255,255,0.05)", padding: "4px 10px", borderRadius: 100 }}>
-                                            RSVP'd on {rsvp.createdAt.toLocaleDateString()}
+                                            RSVP&apos;d on {rsvp.createdAt.toLocaleDateString()}
                                         </span>
                                     </div>
                                 ))}

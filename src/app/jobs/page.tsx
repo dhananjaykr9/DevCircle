@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Briefcase, MapPin, Clock, Code, ArrowRight, Plus, Search, Wifi } from "lucide-react";
+import { Briefcase, MapPin, Clock, ArrowRight, Plus, Search, Wifi } from "lucide-react";
 import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";
 import { auth } from "../../../auth";
@@ -22,6 +22,7 @@ export default async function JobsPage({
     searchParams: Promise<{ type?: string; q?: string; remote?: string }>;
 }) {
     const session = await auth();
+    const now = Date.now();
     const params = await searchParams;
     const typeFilter = params.type || "";
     const query = params.q || "";
@@ -107,64 +108,66 @@ export default async function JobsPage({
                                     <h3 style={{ fontSize: 18, fontWeight: 600, color: "#f0f4ff", marginBottom: 8 }}>No listings found</h3>
                                     <p style={{ color: "rgba(240,244,255,0.5)", fontSize: 14 }}>Try adjusting your filters. Be the first to post an opportunity!</p>
                                 </div>
-                            ) : (
-                                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                                    {jobs.map((job) => {
-                                        const tc = typeColors[job.type] || typeColors["Full-time"];
-                                        const daysAgo = Math.floor((Date.now() - job.createdAt.getTime()) / 86400000);
-                                        return (
-                                            <div key={job.id} className="glass-card" style={{ padding: "22px 26px" }}>
-                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
-                                                    <div>
-                                                        <h3 style={{ fontSize: 17, fontWeight: 700, color: "#f0f4ff", marginBottom: 5, fontFamily: "'Space Grotesk', sans-serif" }}>{job.title}</h3>
-                                                        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                                                            <span style={{ fontSize: 14, fontWeight: 600, color: "#f97316" }}>{job.company}</span>
-                                                            <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "rgba(240,244,255,0.45)" }}>
-                                                                <MapPin size={11} /> {job.isRemote ? "Remote" : job.city.name}
-                                                            </span>
-                                                            {job.isRemote && (
-                                                                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "#34d399", padding: "2px 8px", background: "rgba(16,185,129,0.1)", borderRadius: 100 }}>
-                                                                    <Wifi size={10} /> Remote
+                            ) : (() => {
+                                return (
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                                        {jobs.map((job) => {
+                                            const tc = typeColors[job.type] || typeColors["Full-time"];
+                                            const daysAgo = Math.floor((now - job.createdAt.getTime()) / 86400000);
+                                            return (
+                                                <div key={job.id} className="glass-card" style={{ padding: "22px 26px" }}>
+                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+                                                        <div>
+                                                            <h3 style={{ fontSize: 17, fontWeight: 700, color: "#f0f4ff", marginBottom: 5, fontFamily: "'Space Grotesk', sans-serif" }}>{job.title}</h3>
+                                                            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                                                                <span style={{ fontSize: 14, fontWeight: 600, color: "#f97316" }}>{job.company}</span>
+                                                                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "rgba(240,244,255,0.45)" }}>
+                                                                    <MapPin size={11} /> {job.isRemote ? "Remote" : job.city.name}
                                                                 </span>
+                                                                {job.isRemote && (
+                                                                    <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "#34d399", padding: "2px 8px", background: "rgba(16,185,129,0.1)", borderRadius: 100 }}>
+                                                                        <Wifi size={10} /> Remote
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                                                            <span style={{ padding: "4px 10px", borderRadius: 100, fontSize: 12, fontWeight: 500, background: tc.bg, color: tc.color, border: `1px solid ${tc.border}` }}>{job.type}</span>
+                                                            {job.salary && (
+                                                                <span style={{ fontSize: 13, fontWeight: 600, color: "#a78bfa" }}>{job.salary}</span>
                                                             )}
                                                         </div>
                                                     </div>
-                                                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                                                        <span style={{ padding: "4px 10px", borderRadius: 100, fontSize: 12, fontWeight: 500, background: tc.bg, color: tc.color, border: `1px solid ${tc.border}` }}>{job.type}</span>
-                                                        {job.salary && (
-                                                            <span style={{ fontSize: 13, fontWeight: 600, color: "#a78bfa" }}>{job.salary}</span>
-                                                        )}
+
+                                                    <p style={{ fontSize: 13, color: "rgba(240,244,255,0.5)", lineHeight: 1.65, marginBottom: 14 }}>
+                                                        {job.description.substring(0, 200)}{job.description.length > 200 ? "..." : ""}
+                                                    </p>
+
+                                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+                                                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                                                            {job.techStack.split(",").filter(Boolean).slice(0, 4).map((t) => (
+                                                                <span key={t} style={{ fontSize: 11, color: "rgba(240,244,255,0.5)", background: "rgba(255,255,255,0.04)", padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.07)" }}>{t.trim()}</span>
+                                                            ))}
+                                                        </div>
+                                                        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                                                            <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "rgba(240,244,255,0.3)" }}>
+                                                                <Clock size={10} /> {daysAgo === 0 ? "Today" : `${daysAgo}d ago`}
+                                                            </span>
+                                                            {job.applyUrl ? (
+                                                                <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: "7px 18px", fontSize: 13, borderRadius: 8, display: "flex", alignItems: "center", gap: 5, textDecoration: "none" }}>
+                                                                    Apply <ArrowRight size={13} />
+                                                                </a>
+                                                            ) : (
+                                                                <span style={{ fontSize: 12, color: "rgba(240,244,255,0.3)", fontStyle: "italic" }}>Contact via profile</span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
-
-                                                <p style={{ fontSize: 13, color: "rgba(240,244,255,0.5)", lineHeight: 1.65, marginBottom: 14 }}>
-                                                    {job.description.substring(0, 200)}{job.description.length > 200 ? "..." : ""}
-                                                </p>
-
-                                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-                                                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                                                        {job.techStack.split(",").filter(Boolean).slice(0, 4).map((t) => (
-                                                            <span key={t} style={{ fontSize: 11, color: "rgba(240,244,255,0.5)", background: "rgba(255,255,255,0.04)", padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.07)" }}>{t.trim()}</span>
-                                                        ))}
-                                                    </div>
-                                                    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                                                        <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "rgba(240,244,255,0.3)" }}>
-                                                            <Clock size={10} /> {daysAgo === 0 ? "Today" : `${daysAgo}d ago`}
-                                                        </span>
-                                                        {job.applyUrl ? (
-                                                            <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: "7px 18px", fontSize: 13, borderRadius: 8, display: "flex", alignItems: "center", gap: 5, textDecoration: "none" }}>
-                                                                Apply <ArrowRight size={13} />
-                                                            </a>
-                                                        ) : (
-                                                            <span style={{ fontSize: 12, color: "rgba(240,244,255,0.3)", fontStyle: "italic" }}>Contact via profile</span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
+                                            );
+                                        })}
+                                    </div>
+                                );
+                            })()}
                         </div>
 
                         {/* Sidebar */}

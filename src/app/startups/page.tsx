@@ -13,7 +13,6 @@ export const metadata = {
 export default async function StartupsHubPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
     const params = await searchParams;
     const searchQuery = params.q || "";
-    const session = await auth();
 
     const where: any = { type: "Startup" };
     if (searchQuery) {
@@ -28,12 +27,14 @@ export default async function StartupsHubPage({ searchParams }: { searchParams: 
         delete where.OR;
         where.AND = [
             { type: "Startup" },
-            { OR: [
-                { title: { contains: searchQuery } },
-                { description: { contains: searchQuery } },
-                { techStack: { contains: searchQuery } },
-                { lookingFor: { contains: searchQuery } },
-            ]}
+            {
+                OR: [
+                    { title: { contains: searchQuery } },
+                    { description: { contains: searchQuery } },
+                    { techStack: { contains: searchQuery } },
+                    { lookingFor: { contains: searchQuery } },
+                ]
+            }
         ];
     }
 

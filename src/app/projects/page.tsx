@@ -3,16 +3,12 @@ import { MapPin, Users, Plus, Search, Filter, ExternalLink, GitBranch, Lightbulb
 import Footer from "@/components/Footer";
 import ProjectCard from "@/components/ProjectCard";
 import prisma from "@/lib/prisma";
+import { auth } from "../../../auth";
+import { MockProjects } from "@/lib/mock-data";
 
 export const metadata = {
     title: "Projects — DevCircle",
     description: "Collaborate on startups, open-source projects, and research with professionals and freshers in your city.",
-};
-
-const typeColors: Record<string, string> = {
-    "Open Source": "tag-green",
-    "Startup": "",
-    "Research": "tag-purple",
 };
 
 const statusColors: Record<string, { bg: string; color: string }> = {
@@ -39,7 +35,10 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
         where.type = selectedType;
     }
 
-    const projects = await prisma.project.findMany({
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    let projects = await prisma.project.findMany({
         where,
         orderBy: { createdAt: 'desc' },
         include: {
@@ -48,9 +47,20 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
         }
     });
 
-    const openSourceCount = await prisma.project.count({ where: { type: "Open Source" } });
-    const startupCount = await prisma.project.count({ where: { type: "Startup" } });
-    const researchCount = await prisma.project.count({ where: { type: "Research" } });
+    let openSourceCount = await prisma.project.count({ where: { type: "Open Source" } });
+    let startupCount = await prisma.project.count({ where: { type: "Startup" } });
+    let researchCount = await prisma.project.count({ where: { type: "Research" } });
+
+    if (!userId) {
+        projects = MockProjects.filter(p => {
+            if (searchQuery && !p.title.includes(searchQuery) && !p.description.includes(searchQuery)) return false;
+            if (selectedType && p.type !== selectedType) return false;
+            return true;
+        }) as any;
+        openSourceCount = MockProjects.filter(p => p.type === "Open Source").length;
+        startupCount = MockProjects.filter(p => p.type === "Startup").length;
+        researchCount = MockProjects.filter(p => p.type === "Research").length;
+    }
 
     function buildProjectUrl(overrides: Record<string, string>) {
         const p: Record<string, string> = {};

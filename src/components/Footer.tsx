@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
 import { Github, MapPin, Heart, ArrowUpRight, Code2, Star, Terminal, ChevronUp, Zap, Globe, Shield, Sparkles, Coffee, ArrowRight } from "lucide-react";
 
 const communities = [
@@ -51,13 +54,6 @@ const legalLinks = [
     { href: "/code-of-conduct", label: "Code of Conduct" },
 ];
 
-const techStack = [
-    { name: "Next.js" },
-    { name: "TypeScript" },
-    { name: "Prisma" },
-    { name: "PostgreSQL" },
-    { name: "NextAuth" },
-];
 
 export default function Footer() {
     return (
@@ -150,31 +146,11 @@ export default function Footer() {
                             {/* Brand Column */}
                             <div>
                                 <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
-                                    <img src="/images/3logo.png" alt="DevCircle" style={{ height: 38, objectFit: "contain", borderRadius: 10 }} />
+                                    <Image src="/images/3logo.png" alt="DevCircle" width={114} height={38} unoptimized style={{ objectFit: "contain", borderRadius: 10 }} />
                                 </Link>
                                 <p style={{ fontSize: 14, color: "rgba(240,244,255,0.45)", lineHeight: 1.85, marginBottom: 22, maxWidth: 300 }}>
                                     Hyper-local open-source tech community platform connecting developers across Indian cities.
                                 </p>
-
-                                {/* Tech Stack Badges */}
-                                <div style={{ marginBottom: 24 }}>
-                                    <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(240,244,255,0.25)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10 }}>Built with</div>
-                                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                                        {techStack.map((tech) => (
-                                            <span key={tech.name} style={{
-                                                fontSize: 11,
-                                                padding: "4px 10px",
-                                                borderRadius: 6,
-                                                background: "rgba(255,255,255,0.04)",
-                                                border: "1px solid rgba(255,255,255,0.07)",
-                                                color: "rgba(240,244,255,0.5)",
-                                                fontWeight: 500,
-                                            }}>
-                                                {tech.name}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
 
                                 {/* Social Buttons */}
                                 <div style={{ display: "flex", gap: 8 }}>
@@ -306,9 +282,13 @@ export default function Footer() {
                                         {link.label}
                                     </Link>
                                 ))}
-                                <a href="#" className="footer-back-top" style={{ fontSize: 12, color: "rgba(240,244,255,0.3)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, transition: "all 0.2s", padding: "4px 12px", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                                <button
+                                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                                    className="footer-back-top"
+                                    style={{ fontSize: 12, color: "rgba(240,244,255,0.3)", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", cursor: "pointer", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, transition: "all 0.2s", padding: "4px 12px", borderRadius: 8 }}
+                                >
                                     Top <ChevronUp size={13} />
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -327,9 +307,9 @@ export default function Footer() {
                     transform: translateY(-1px);
                 }
                 .footer-back-top:hover {
-                    color: #f0f4ff !important;
-                    background: rgba(255,255,255,0.06) !important;
-                    border-color: rgba(255,255,255,0.12) !important;
+                    color: #f97316 !important;
+                    background: rgba(249,115,22,0.08) !important;
+                    border-color: rgba(249,115,22,0.2) !important;
                 }
                 .footer-top-glow {
                     animation: footerGlow 4s ease-in-out infinite;

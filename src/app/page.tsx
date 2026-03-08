@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, Users, MessageSquare, Zap, MapPin, Code2, Rocket, Shield, Star } from "lucide-react";
+import { ArrowRight, MessageSquare, Zap, MapPin, Code2, Rocket, Shield, Star } from "lucide-react";
 import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";
+import { MockDiscussions, MockEvents } from "@/lib/mock-data";
+import { auth } from "../../auth";
 
 const features = [
   {
@@ -78,9 +80,13 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   // Fetch real data from Prisma
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let activeCities: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let waitlistCities: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let topDiscussions: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let upcomingEvents: any[] = [];
   let totalCities = 0, totalMembers = 0, totalDiscussions = 0, totalEvents = 0;
 
@@ -125,12 +131,25 @@ export default async function HomePage() {
     });
 
     totalCities = await prisma.city.count({ where: { isActive: true } });
-    const totalWaitlistCities = await prisma.city.count({ where: { isActive: false } });
+    await prisma.city.count({ where: { isActive: false } });
     totalMembers = await prisma.user.count();
     totalDiscussions = await prisma.post.count();
     totalEvents = await prisma.event.count();
+
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      if (topDiscussions.length === 0) topDiscussions = MockDiscussions as any;
+      if (upcomingEvents.length === 0) upcomingEvents = MockEvents as any;
+    }
   } catch {
     // Database not available during build — use defaults
+    const session = await auth().catch(() => null);
+    if (!session?.user?.id) {
+      topDiscussions = MockDiscussions as any;
+      upcomingEvents = MockEvents as any;
+    }
   }
 
   const realStats = [

@@ -44,7 +44,7 @@ function isPublicRoute(pathname: string): boolean {
 
 export default auth((req) => {
     const isLoggedIn = !!req.auth;
-    const isOnboarded = req.auth?.user ? (req.auth.user as any).onboarded : false;
+    const isOnboarded = req.auth?.user ? (req.auth.user as { onboarded?: boolean }).onboarded : false;
     const pathname = req.nextUrl.pathname;
     const isAuthRoute = pathname.startsWith('/auth');
     const _isPublic = isPublicRoute(pathname);

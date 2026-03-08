@@ -21,7 +21,7 @@ export default {
                 email: { label: "Email", type: "email", placeholder: "developer@example.com" },
                 password: { label: "Password", type: "password" }
             },
-            async authorize(credentials) {
+            async authorize() {
                 // This will be overridden in auth.ts because Prisma is not edge-compatible
                 return null;
             }

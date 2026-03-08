@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { Shield, Eye, Database, Lock, UserCheck, Globe, Trash2, Mail } from "lucide-react";
+import { Shield, Eye, Database, Lock, UserCheck, Globe, Mail } from "lucide-react";
 
 export const metadata = {
     title: "Privacy Policy — DevCircle",
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
                         Privacy Policy
                     </h1>
                     <p style={{ fontSize: 16, color: "rgba(240,244,255,0.55)", lineHeight: 1.7, maxWidth: 600, margin: "0 auto" }}>
-                        Your privacy matters. Here's exactly how DevCircle handles your data — transparently and simply.
+                        Your privacy matters. Here&apos;s exactly how DevCircle handles your data — transparently and simply.
                     </p>
                     <p style={{ fontSize: 13, color: "rgba(240,244,255,0.35)", marginTop: 16 }}>
                         Last updated: March 2026

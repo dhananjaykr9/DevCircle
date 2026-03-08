@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Briefcase, Star, Edit2, ArrowRight, MessageSquare, Code2, Zap, Github, Globe, Award, Users } from "lucide-react";
 import Footer from "@/components/Footer";
 import prisma from "@/lib/prisma";
 import { auth } from "../../../auth";
+import DevCircleCard from "@/components/DevCircleCard";
 import { redirect } from "next/navigation";
 import { acceptMentorRequest, declineMentorRequest } from "@/lib/actions/mentorship";
 
@@ -126,7 +128,7 @@ export default async function ProfilePage() {
                                             }}
                                         >
                                             {user.image ? (
-                                                <img src={user.image} alt={user.name || "User"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                                <Image src={user.image} alt={user.name || "User"} width={88} height={88} unoptimized style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                             ) : (
                                                 user.name?.substring(0, 2).toUpperCase() || "U"
                                             )}
@@ -295,6 +297,9 @@ export default async function ProfilePage() {
                             </span>
                         </div>
 
+                        {/* Dev Circle Card (Downloadable) */}
+                        <DevCircleCard user={user as any} />
+
                         {/* Real Badges */}
                         <div className="glass-card" style={{ padding: 22, marginBottom: 20 }}>
                             <h3 style={{ fontSize: 14, fontWeight: 600, color: "#f0f4ff", marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}>
@@ -330,7 +335,7 @@ export default async function ProfilePage() {
                                             <div key={req.id} style={{ padding: "12px 14px", borderRadius: 10, background: req.status === "PENDING" ? "rgba(249,115,22,0.05)" : "rgba(255,255,255,0.02)", border: `1px solid ${req.status === "PENDING" ? "rgba(249,115,22,0.15)" : "rgba(255,255,255,0.06)"}` }}>
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                                        <img src={req.mentee.image || `https://ui-avatars.com/api/?name=${req.mentee.name || "U"}&background=8b5cf6&color=fff&size=28`} alt={req.mentee.name || ""} style={{ width: 24, height: 24, borderRadius: "50%" }} />
+                                                        <Image src={req.mentee.image || `https://ui-avatars.com/api/?name=${req.mentee.name || "U"}&background=8b5cf6&color=fff&size=28`} alt={req.mentee.name || ""} width={24} height={24} unoptimized style={{ borderRadius: "50%" }} />
                                                         <span style={{ fontSize: 13, fontWeight: 600, color: "#f0f4ff" }}>{req.mentee.name}</span>
                                                     </div>
                                                     <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 100, background: req.status === "PENDING" ? "rgba(249,115,22,0.12)" : req.status === "ACCEPTED" ? "rgba(16,185,129,0.12)" : "rgba(239,68,68,0.12)", color: req.status === "PENDING" ? "#fb923c" : req.status === "ACCEPTED" ? "#34d399" : "#f87171" }}>

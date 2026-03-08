@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { HelpCircle, Search, MessageSquare, BookOpen, Users, MapPin, Code2, Shield, Mail } from "lucide-react";
+import { HelpCircle, MessageSquare, BookOpen, Users, MapPin, Code2, Shield, Mail } from "lucide-react";
 
 export const metadata = {
     title: "Help Center — DevCircle",
@@ -139,7 +139,7 @@ export default function HelpPage() {
                         <Mail size={32} color="#f97316" style={{ marginBottom: 16 }} />
                         <h2 style={{ fontSize: 22, fontWeight: 700, color: "#f0f4ff", margin: "0 0 12px" }}>Still Need Help?</h2>
                         <p style={{ fontSize: 15, color: "rgba(240,244,255,0.5)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 24px" }}>
-                            Can't find what you're looking for? Reach out to the community in Discussions, or open an issue on our GitHub repository.
+                            Can&apos;t find what you&apos;re looking for? Reach out to the community in Discussions, or open an issue on our GitHub repository.
                         </p>
                         <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
                             <Link href="/discussions" className="btn-primary" style={{ textDecoration: "none", fontSize: 14 }}>

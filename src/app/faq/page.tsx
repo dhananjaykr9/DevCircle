@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { HelpCircle, ChevronDown, MessageSquare, Users, Code2, MapPin, Shield, Briefcase, Award } from "lucide-react";
+import { HelpCircle, MessageSquare, Users, Code2, MapPin, Shield, Briefcase, Award } from "lucide-react";
 
 export const metadata = {
     title: "FAQs — DevCircle",

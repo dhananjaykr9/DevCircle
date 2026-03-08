@@ -18,7 +18,7 @@ interface PollVoteButtonProps {
     isExpired: boolean;
 }
 
-export default function PollVoteButton({ pollId, options, userVotedOptionId, totalVotes, isExpired }: PollVoteButtonProps) {
+export default function PollVoteButton({ options, userVotedOptionId, totalVotes, isExpired }: PollVoteButtonProps) {
     const [selectedId, setSelectedId] = useState<string | null>(userVotedOptionId);
     const [localCounts, setLocalCounts] = useState<Record<string, number>>(
         Object.fromEntries(options.map((o) => [o.id, o.votes.length]))

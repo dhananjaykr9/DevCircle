@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { MapPin, Users, MessageSquare, Zap, Calendar, ArrowRight, Star, Code2, Award, Globe, BookOpen, Rocket, Shield, Heart, Target, Lightbulb, TrendingUp, HandHeart, Coffee } from "lucide-react";
 import Footer from "@/components/Footer";
-import WaitlistButton from "@/components/WaitlistButton";
 import prisma from "@/lib/prisma";
+import JoinCommunityButton from "@/components/JoinCommunityButton";
+import { auth } from "../../../../auth";
+import { MockDiscussions, MockProjects, MockEvents, MockUsers } from "@/lib/mock-data";
 
 export async function generateStaticParams() {
     try {
@@ -38,6 +40,18 @@ export default async function CityPage({ params, searchParams }: { params: Promi
     const resolvedSearchParams = await searchParams;
     const currentTab = resolvedSearchParams.tab || "discussions";
 
+    const session = await auth();
+    const userId = session?.user?.id;
+    let userCityId = null;
+
+    if (userId) {
+        const dbUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { cityId: true }
+        });
+        userCityId = dbUser?.cityId;
+    }
+
     let cityData = await prisma.city.findUnique({
         where: { id: city },
         include: {
@@ -57,29 +71,35 @@ export default async function CityPage({ params, searchParams }: { params: Promi
         return <div className="container" style={{ paddingTop: 120 }}>Community not found.</div>;
     }
 
-    const cityDiscussions = await prisma.post.findMany({
+    let cityDiscussions = await prisma.post.findMany({
         where: { cityId: cityData.id },
         take: 4,
         orderBy: { createdAt: 'desc' },
         include: { author: true, _count: { select: { comments: true, upvotes: true } } }
     });
+    if (!userId) cityDiscussions = MockDiscussions as unknown as typeof cityDiscussions;
 
-    const cityProjects = await prisma.project.findMany({
+    let cityProjects = await prisma.project.findMany({
         where: { cityId: cityData.id },
         take: 3,
         orderBy: { createdAt: 'desc' }
     });
+    if (!userId) cityProjects = MockProjects as unknown as typeof cityProjects;
 
-    const cityEvents = await prisma.event.findMany({
+    let cityEvents = await prisma.event.findMany({
         where: { cityId: cityData.id },
         take: 3,
         orderBy: { date: 'asc' }
     });
+    if (!userId) cityEvents = MockEvents as unknown as typeof cityEvents;
 
-    const cityMembers = await prisma.user.findMany({
+    let cityMembers = await prisma.user.findMany({
         where: { cityId: cityData.id },
         take: 5
     });
+    if (!userId) cityMembers = MockUsers as unknown as typeof cityMembers;
+
+    const isMember = userId ? cityData.id === userCityId : false;
 
     return (
         <>
@@ -138,29 +158,14 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "rgba(240,244,255,0.45)" }}>
                                         <MapPin size={13} />
                                         {cityData.state} · {cityData.tier}
-                                        {cityData.isActive ? (
-                                            <>
-                                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981", marginLeft: 4 }} />
-                                                <span style={{ color: "#10b981" }}>Active</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#a78bfa", display: "inline-block", boxShadow: "0 0 6px #a78bfa", marginLeft: 4 }} />
-                                                <span style={{ color: "#a78bfa" }}>Waitlist</span>
-                                            </>
-                                        )}
+                                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981", marginLeft: 4 }} />
+                                        <span style={{ color: "#10b981" }}>Active</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {cityData.isActive ? (
-                            <Link href={`/communities/${cityData.id}`} className="btn-primary">
-                                Join Community <ArrowRight size={15} />
-                            </Link>
-                        ) : (
-                            <WaitlistButton cityName={cityData.name} variant="primary" />
-                        )}
+                        <JoinCommunityButton cityId={cityData.id} isMember={isMember} />
                     </div>
 
                     {/* Stats */}
@@ -201,23 +206,7 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                 </div>
             </section>
 
-            {/* Waitlist banner for non-active cities */}
-            {!cityData.isActive && (
-                <div style={{ background: "linear-gradient(135deg, rgba(139,92,246,0.08), rgba(249,115,22,0.06))", borderBottom: "1px solid rgba(139,92,246,0.15)" }}>
-                    <div className="container" style={{ padding: "20px 0", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#a78bfa", boxShadow: "0 0 8px #a78bfa" }} />
-                            <div>
-                                <span style={{ fontWeight: 700, color: "#f0f4ff", fontSize: 14 }}>This community is on the waitlist</span>
-                                <p style={{ fontSize: 12, color: "rgba(240,244,255,0.45)", margin: "2px 0 0" }}>
-                                    DevCircle {cityData.name} is not yet live. Currently only <Link href="/communities/nagpur" style={{ color: "#f97316", textDecoration: "underline" }}>Nagpur</Link> is active.
-                                </p>
-                            </div>
-                        </div>
-                        <WaitlistButton cityName={cityData.name} variant="banner" />
-                    </div>
-                </div>
-            )}
+            {/* Waitlist banner removed since all communities are treated as active with mock data */}
 
             {/* Tabs */}
             <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", background: "rgba(8,11,20,0.7)", position: "sticky", top: 68, zIndex: 50 }}>
@@ -267,32 +256,32 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                                     <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 40 }}>
                                         {cityDiscussions.length === 0 && <div className="glass-card" style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.4)" }}>No discussions yet. Start one!</div>}
                                         {cityDiscussions.map((d) => (
-                                    <Link key={d.id} href="/discussions" style={{ textDecoration: "none" }}>
-                                        <div className="glass-card" style={{ padding: "18px 22px" }}>
-                                            <div style={{ display: "flex", gap: 16 }}>
-                                                <div style={{ textAlign: "center", minWidth: 40 }}>
-                                                    <div style={{ fontWeight: 800, fontSize: 16, color: "#f97316" }}>{d._count.upvotes}</div>
-                                                    <div style={{ fontSize: 10, color: "rgba(240,244,255,0.3)" }}>votes</div>
-                                                </div>
-                                                <div style={{ flex: 1 }}>
-                                                    <div style={{ display: "flex", gap: 6, marginBottom: 7, flexWrap: "wrap" }}>
-                                                        <span className="tag" style={{ fontSize: 10 }}>{d.category}</span>
-                                                        {d.tags?.split(',').slice(0, 2).map((t) => (
-                                                            <span key={t} style={{ fontSize: 11, color: "rgba(240,244,255,0.35)", padding: "2px 8px", background: "rgba(255,255,255,0.04)", borderRadius: 100, border: "1px solid rgba(255,255,255,0.06)" }}>{t}</span>
-                                                        ))}
+                                            <Link key={d.id} href="/discussions" style={{ textDecoration: "none" }}>
+                                                <div className="glass-card" style={{ padding: "18px 22px" }}>
+                                                    <div style={{ display: "flex", gap: 16 }}>
+                                                        <div style={{ textAlign: "center", minWidth: 40 }}>
+                                                            <div style={{ fontWeight: 800, fontSize: 16, color: "#f97316" }}>{d._count.upvotes}</div>
+                                                            <div style={{ fontSize: 10, color: "rgba(240,244,255,0.3)" }}>votes</div>
+                                                        </div>
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ display: "flex", gap: 6, marginBottom: 7, flexWrap: "wrap" }}>
+                                                                <span className="tag" style={{ fontSize: 10 }}>{d.category}</span>
+                                                                {d.tags?.split(',').slice(0, 2).map((t) => (
+                                                                    <span key={t} style={{ fontSize: 11, color: "rgba(240,244,255,0.35)", padding: "2px 8px", background: "rgba(255,255,255,0.04)", borderRadius: 100, border: "1px solid rgba(255,255,255,0.06)" }}>{t}</span>
+                                                                ))}
+                                                            </div>
+                                                            <h3 style={{ fontSize: 14, fontWeight: 600, color: "#f0f4ff", marginBottom: 6, lineHeight: 1.45 }}>{d.title}</h3>
+                                                            <div style={{ display: "flex", gap: 14, fontSize: 12, color: "rgba(240,244,255,0.4)" }}>
+                                                                <span>{d.author.name}</span>
+                                                                <span>{d._count.comments} replies</span>
+                                                                <span>Recently</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <h3 style={{ fontSize: 14, fontWeight: 600, color: "#f0f4ff", marginBottom: 6, lineHeight: 1.45 }}>{d.title}</h3>
-                                                    <div style={{ display: "flex", gap: 14, fontSize: 12, color: "rgba(240,244,255,0.4)" }}>
-                                                        <span>{d.author.name}</span>
-                                                        <span>{d._count.comments} replies</span>
-                                                        <span>Recently</span>
-                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
+                                            </Link>
+                                        ))}
+                                    </div>
                                 </>
                             )}
 
@@ -304,28 +293,28 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                                     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                                         {cityProjects.length === 0 && <div className="glass-card" style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.4)" }}>No projects yet.</div>}
                                         {cityProjects.map((p) => (
-                                    <div key={p.id} className="glass-card" style={{ padding: "20px 24px" }}>
-                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-                                            <span className={`tag ${p.type === "Open Source" ? "tag-green" : p.type === "Startup" ? "" : "tag-purple"}`} style={{ fontSize: 11 }}>
-                                                {p.type}
-                                            </span>
-                                            <span style={{ fontSize: 12, color: "rgba(240,244,255,0.4)" }}>Team: {p.teamSize}</span>
-                                        </div>
-                                        <h3 style={{ fontSize: 15, fontWeight: 600, color: "#f0f4ff", marginBottom: 8, lineHeight: 1.4 }}>{p.title}</h3>
-                                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
-                                            {p.techStack?.split(',').slice(0, 4).map((t) => (
-                                                <span key={t} className="tag tag-blue" style={{ fontSize: 10 }}>{t}</span>
-                                            ))}
-                                        </div>
-                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                            <span style={{ fontSize: 12, color: "rgba(240,244,255,0.4)" }}>Looking for: {p.lookingFor?.split(',')[0]}</span>
-                                            <Link href="/projects" className="btn-secondary" style={{ padding: "5px 14px", fontSize: 12, borderRadius: 8 }}>
-                                                View
-                                            </Link>
-                                        </div>
+                                            <div key={p.id} className="glass-card" style={{ padding: "20px 24px" }}>
+                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                                                    <span className={`tag ${p.type === "Open Source" ? "tag-green" : p.type === "Startup" ? "" : "tag-purple"}`} style={{ fontSize: 11 }}>
+                                                        {p.type}
+                                                    </span>
+                                                    <span style={{ fontSize: 12, color: "rgba(240,244,255,0.4)" }}>Team: {p.teamSize}</span>
+                                                </div>
+                                                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#f0f4ff", marginBottom: 8, lineHeight: 1.4 }}>{p.title}</h3>
+                                                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+                                                    {p.techStack?.split(',').slice(0, 4).map((t) => (
+                                                        <span key={t} className="tag tag-blue" style={{ fontSize: 10 }}>{t}</span>
+                                                    ))}
+                                                </div>
+                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                    <span style={{ fontSize: 12, color: "rgba(240,244,255,0.4)" }}>Looking for: {p.lookingFor?.split(',')[0]}</span>
+                                                    <Link href="/projects" className="btn-secondary" style={{ padding: "5px 14px", fontSize: 12, borderRadius: 8 }}>
+                                                        View
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
                                 </>
                             )}
 
@@ -404,28 +393,20 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                                     </div>
 
                                     {/* Status Card */}
-                                    <div className="glass-card" style={{ padding: "24px 28px", background: cityData.isActive ? "rgba(16,185,129,0.04)" : "rgba(139,92,246,0.04)", borderColor: cityData.isActive ? "rgba(16,185,129,0.12)" : "rgba(139,92,246,0.12)" }}>
+                                    <div className="glass-card" style={{ padding: "24px 28px", background: "rgba(16,185,129,0.04)", borderColor: "rgba(16,185,129,0.12)" }}>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                                                <div style={{ width: 10, height: 10, borderRadius: "50%", background: cityData.isActive ? "#10b981" : "#a78bfa", boxShadow: `0 0 10px ${cityData.isActive ? "rgba(16,185,129,0.5)" : "rgba(139,92,246,0.5)"}` }} />
+                                                <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#10b981", boxShadow: `0 0 10px rgba(16,185,129,0.5)` }} />
                                                 <div>
-                                                    <div style={{ fontWeight: 700, fontSize: 15, color: cityData.isActive ? "#10b981" : "#a78bfa" }}>
-                                                        {cityData.isActive ? "Community is Live" : "Community on Waitlist"}
+                                                    <div style={{ fontWeight: 700, fontSize: 15, color: "#10b981" }}>
+                                                        Community is Live
                                                     </div>
                                                     <div style={{ fontSize: 12, color: "rgba(240,244,255,0.4)" }}>
-                                                        {cityData.isActive
-                                                            ? "Open for new members, discussions, events, and projects."
-                                                            : `DevCircle ${cityData.name} is not yet live. Join the waitlist to get notified.`}
+                                                        Open for new members, discussions, events, and projects.
                                                     </div>
                                                 </div>
                                             </div>
-                                            {cityData.isActive ? (
-                                                <Link href={`/communities/${cityData.id}`} className="btn-primary" style={{ fontSize: 13, padding: "10px 20px", borderRadius: 10 }}>
-                                                    Join Community <ArrowRight size={13} />
-                                                </Link>
-                                            ) : (
-                                                <WaitlistButton cityName={cityData.name} variant="small" />
-                                            )}
+                                            <JoinCommunityButton cityId={cityData.id} isMember={isMember} />
                                         </div>
                                     </div>
 

@@ -18,11 +18,13 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
     if (searchQuery) {
         where.AND = [
             { type: "Open Source" },
-            { OR: [
-                { title: { contains: searchQuery } },
-                { description: { contains: searchQuery } },
-                { techStack: { contains: searchQuery } },
-            ]}
+            {
+                OR: [
+                    { title: { contains: searchQuery } },
+                    { description: { contains: searchQuery } },
+                    { techStack: { contains: searchQuery } },
+                ]
+            }
         ];
         delete where.type;
     }
@@ -96,7 +98,7 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
                     ) : (
                         <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))" }}>
                             {osProjects.map((project) => (
-                                <ProjectCard key={project.id} project={project as any} currentUserId={session?.user?.id} />
+                                <ProjectCard key={project.id} project={project as any} />
                             ))}
                         </div>
                     )}

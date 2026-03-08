@@ -33,7 +33,7 @@ export default function AboutPage() {
                         <Heart size={14} /> About Us
                     </div>
                     <h1 style={{ fontSize: 44, fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-1.5px", lineHeight: 1.15, margin: "0 0 20px" }}>
-                        Building India's Largest<br />
+                        Building India&apos;s Largest<br />
                         <span style={{ background: "linear-gradient(135deg, #f97316, #fb923c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                             Open-Source Dev Community
                         </span>
@@ -69,10 +69,10 @@ export default function AboutPage() {
                             <h2 style={{ fontSize: 24, fontWeight: 700, color: "#f0f4ff", margin: 0 }}>Our Mission</h2>
                         </div>
                         <p style={{ fontSize: 15, color: "rgba(240,244,255,0.6)", lineHeight: 1.8, margin: "0 0 16px" }}>
-                            India has one of the world's largest developer populations, yet most tech communities operate in isolation — scattered across WhatsApp groups, Discord servers, and LinkedIn posts. DevCircle brings structure, discoverability, and permanence to local tech communities.
+                            India has one of the world&apos;s largest developer populations, yet most tech communities operate in isolation — scattered across WhatsApp groups, Discord servers, and LinkedIn posts. DevCircle brings structure, discoverability, and permanence to local tech communities.
                         </p>
                         <p style={{ fontSize: 15, color: "rgba(240,244,255,0.6)", lineHeight: 1.8, margin: 0 }}>
-                            We provide a unified platform where developers can find their city's tech scene, discover events, collaborate on projects, mentor newcomers, and grow together — all without corporate gatekeeping or paywalls.
+                            We provide a unified platform where developers can find their city&apos;s tech scene, discover events, collaborate on projects, mentor newcomers, and grow together — all without corporate gatekeeping or paywalls.
                         </p>
                     </div>
                 </div>

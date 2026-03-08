@@ -2,8 +2,9 @@ import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import Footer from "@/components/Footer";
-import { MessageSquare, User as UserIcon } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 export const metadata = {
     title: "Messages — DevCircle",
@@ -83,7 +84,7 @@ export default async function MessagesInbox() {
                                         >
                                             <div style={{ position: "relative" }}>
                                                 {otherUser.image ? (
-                                                    <img src={otherUser.image} alt={otherUser.name || "User"} style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover" }} />
+                                                    <Image src={otherUser.image} alt={otherUser.name || "User"} width={48} height={48} unoptimized style={{ borderRadius: "50%", objectFit: "cover" }} />
                                                 ) : (
                                                     <div style={{ width: 48, height: 48, borderRadius: "50%", background: "linear-gradient(135deg, #8b5cf6, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "bold", fontSize: 18 }}>
                                                         {otherUser.name?.charAt(0).toUpperCase() || "U"}

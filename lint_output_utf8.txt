@@ -1,0 +1,39 @@
+﻿
+D:\VNIT\devcircle\src\app\communities\[city]\page.tsx
+    4:8   warning  'WaitlistButton' is defined but never used  @typescript-eslint/no-unused-vars
+   81:87  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   88:78  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   95:72  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  101:73  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+D:\VNIT\devcircle\src\app\events\page.tsx
+  30:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\VNIT\devcircle\src\app\network\page.tsx
+  27:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\VNIT\devcircle\src\app\page.tsx
+   82:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   83:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   84:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:74  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  135:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  138:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  139:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\VNIT\devcircle\src\app\projects\page.tsx
+    2:10  warning  'MapPin' is defined but never used                 @typescript-eslint/no-unused-vars
+    2:18  warning  'Users' is defined but never used                  @typescript-eslint/no-unused-vars
+    2:39  warning  'Filter' is defined but never used                 @typescript-eslint/no-unused-vars
+    2:47  warning  'ExternalLink' is defined but never used           @typescript-eslint/no-unused-vars
+   14:7   warning  'statusColors' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   25:18  error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   59:15  error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  161:67  error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+Γ£û 26 problems (20 errors, 6 warnings)
+

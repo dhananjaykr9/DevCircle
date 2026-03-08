@@ -35,7 +35,7 @@ export default async function OnboardingPage() {
                         Welcome to DevCircle, {session.user.name?.split(' ')[0] || "Developer"}!
                     </h1>
                     <p style={{ color: "rgba(240,244,255,0.5)", fontSize: 14 }}>
-                        Let's set up your profile to personalize your feed and discover local opportunities.
+                        Let&apos;s set up your profile to personalize your feed and discover local opportunities.
                     </p>
                 </div>
 
