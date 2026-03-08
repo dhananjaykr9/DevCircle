@@ -4,7 +4,7 @@ import { HelpCircle, MessageSquare, Users, Code2, MapPin, Shield, Briefcase, Awa
 
 export const metadata = {
     title: "FAQs — DevCircle",
-    description: "Frequently asked questions about DevCircle — the open-source hyper-local tech community platform.",
+    description: "Frequently asked questions about DevCircle — the community-driven hyper-local tech platform.",
 };
 
 const faqs = [
@@ -12,8 +12,8 @@ const faqs = [
         category: "General",
         icon: <HelpCircle size={20} />,
         questions: [
-            { q: "What is DevCircle?", a: "DevCircle is an open-source, hyper-local technology community platform that connects professionals and freshers across cities in India. Think of it as a dedicated space for your city's tech scene — discussions, events, projects, mentorship, jobs, and more." },
-            { q: "Is DevCircle free?", a: "Yes, DevCircle is completely free and always will be. We're an open-source project maintained by the community. There are no premium plans, subscriptions, or hidden costs." },
+            { q: "What is DevCircle?", a: "DevCircle is a community-driven, hyper-local technology platform that connects professionals and freshers across cities in India. Think of it as a dedicated space for your city's tech scene — discussions, events, projects, mentorship, jobs, and more." },
+            { q: "Is DevCircle free?", a: "Yes, DevCircle is completely free and always will be. We're a community-powered platform. There are no premium plans, subscriptions, or hidden costs." },
             { q: "Who can join DevCircle?", a: "Anyone interested in technology! Whether you're a student, fresher, working professional, freelancer, startup founder, or tech enthusiast — DevCircle welcomes you. We have members across all experience levels." },
             { q: "How is DevCircle different from LinkedIn or Discord?", a: "DevCircle is purpose-built for local tech communities. Unlike LinkedIn (professional networking) or Discord (chat-focused), DevCircle combines structured discussions, local events, project collaboration, mentorship matching, governance, and reputation — all organized by city." },
         ],
@@ -47,12 +47,12 @@ const faqs = [
         ],
     },
     {
-        category: "Projects & Open Source",
+        category: "Projects & Collaboration",
         icon: <Code2 size={20} />,
         questions: [
             { q: "How do I showcase my project?", a: "Navigate to Projects → New Project. Add your project name, description, GitHub link, tech stack, and a brief overview. Projects are visible to the entire community." },
             { q: "How do I find projects to contribute to?", a: "Browse the Projects page to discover projects from fellow community members. Look for projects tagged with frameworks or languages you're interested in." },
-            { q: "Can I contribute to DevCircle itself?", a: "Absolutely! DevCircle is open-source. Check out our Contribution Guide on the Open Source page, or visit our GitHub repository to find issues you can work on." },
+            { q: "Can I contribute to DevCircle itself?", a: "We welcome feedback and ideas! You can suggest features, report issues, or share your thoughts through our Help Center and community discussions." },
         ],
     },
     {

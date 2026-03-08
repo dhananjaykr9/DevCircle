@@ -14,7 +14,7 @@ const PUBLIC_PATHS = new Set([
     '/leaderboard',
     '/jobs',
     '/learning',
-    '/open-source',
+    '/mentorship',
     '/about',
     '/guidelines',
     '/code-of-conduct',

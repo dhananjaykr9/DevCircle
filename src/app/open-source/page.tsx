@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Github, Plus, Search } from "lucide-react";
 
 export const metadata = {
-    title: "Open Source Hub — DevCircle",
+    title: "Community Projects — DevCircle",
 };
 
 export default async function OpenSourcePage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
@@ -51,10 +51,10 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
                             <Github size={14} /> Official Hub
                         </div>
                         <h1 style={{ fontSize: 42, fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", margin: "0 0 16px 0", letterSpacing: "-1px" }}>
-                            Contribute to <span style={{ color: "#10b981" }}>Open Source</span>
+                            Community <span style={{ color: "#10b981" }}>Projects</span>
                         </h1>
                         <p style={{ fontSize: 18, color: "rgba(240,244,255,0.6)", margin: 0, lineHeight: 1.6 }}>
-                            Discover community-led open source projects. Join teams, write code, and build your portfolio alongside other DevCircle members.
+                            Discover community-led projects. Join teams, collaborate, and build your portfolio alongside other DevCircle members.
                         </p>
                     </div>
                     <div>
@@ -76,7 +76,7 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
                 <div className="container" style={{ maxWidth: 1000 }}>
                     <form action="/open-source" method="get" style={{ position: "relative", maxWidth: 480 }}>
                         <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "rgba(240,244,255,0.3)" }} />
-                        <input className="input" name="q" defaultValue={searchQuery} placeholder="Search open source projects..." style={{ paddingLeft: 38 }} suppressHydrationWarning />
+                        <input className="input" name="q" defaultValue={searchQuery} placeholder="Search community projects..." style={{ paddingLeft: 38 }} suppressHydrationWarning />
                     </form>
                 </div>
             </section>
@@ -87,7 +87,7 @@ export default async function OpenSourcePage({ searchParams }: { searchParams: P
                     {osProjects.length === 0 ? (
                         <div className="glass-card" style={{ padding: 60, textAlign: "center" }}>
                             <Github size={48} style={{ margin: "0 auto 20px", opacity: 0.3 }} color="#f0f4ff" />
-                            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#f0f4ff", margin: "0 0 8px 0" }}>No open source projects yet</h2>
+                            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#f0f4ff", margin: "0 0 8px 0" }}>No community projects yet</h2>
                             <p style={{ fontSize: 15, color: "rgba(240,244,255,0.5)", margin: "0 0 24px 0" }}>Be the first to share an open source repository with the community.</p>
                             {session ? (
                                 <Link href="/projects/new" className="btn-primary" style={{ padding: "10px 20px" }}>Share Repository</Link>

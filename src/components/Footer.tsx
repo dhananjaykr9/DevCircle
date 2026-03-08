@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Github, MapPin, Heart, ArrowUpRight, Code2, Star, Terminal, ChevronUp, Zap, Globe, Shield, Sparkles, Coffee, ArrowRight } from "lucide-react";
+import { Github, MapPin, Heart, Code2, Star, Terminal, ChevronUp, Zap, Globe, Shield, Sparkles, Coffee, ArrowRight } from "lucide-react";
 
 const communities = [
     { name: "Nagpur", href: "/communities/nagpur", active: true },
@@ -22,24 +22,22 @@ const platformLinks = [
     { href: "/events", label: "Events" },
     { href: "/mentorship", label: "Mentorship" },
     { href: "/jobs", label: "Jobs" },
-    { href: "/learning", label: "Learning Hub" },
-    { href: "/leaderboard", label: "Leaderboard" },
 ];
 
-const openSourceLinks = [
-    { href: "https://github.com/dhananjaykr9/DevCircle", label: "GitHub Repo", external: true },
-    { href: "/open-source", label: "Contribute" },
-    { href: "https://github.com/dhananjaykr9/DevCircle/issues", label: "Report Issues", external: true },
-    { href: "https://github.com/dhananjaykr9/DevCircle/issues/new", label: "Feature Requests", external: true },
-    { href: "https://github.com/dhananjaykr9/DevCircle/pulls", label: "Pull Requests", external: true },
-];
-
-const communityLinks = [
+const communityAboutLinks = [
     { href: "/about", label: "About DevCircle" },
     { href: "/guidelines", label: "Community Guidelines" },
     { href: "/code-of-conduct", label: "Code of Conduct" },
-    { href: "/governance", label: "Governance" },
-    { href: "/moderation", label: "Moderation" },
+    { href: "/governance", label: "Become a Community Lead" },
+];
+
+const communityLinks = [
+    { href: "/communities", label: "Communities" },
+    { href: "/discussions", label: "Discussions" },
+    { href: "/projects", label: "Projects" },
+    { href: "/events", label: "Events" },
+    { href: "/mentorship", label: "Mentorship" },
+    { href: "/jobs", label: "Jobs" },
 ];
 
 const resourceLinks = [
@@ -54,13 +52,6 @@ const legalLinks = [
     { href: "/code-of-conduct", label: "Code of Conduct" },
 ];
 
-const techStack = [
-    { name: "Next.js" },
-    { name: "TypeScript" },
-    { name: "Prisma" },
-    { name: "PostgreSQL" },
-    { name: "NextAuth" },
-];
 
 export default function Footer() {
     return (
@@ -73,7 +64,7 @@ export default function Footer() {
             <div className="footer-top-glow" style={{ height: 2, background: "linear-gradient(90deg, transparent, rgba(249,115,22,0.5) 20%, rgba(139,92,246,0.5) 50%, rgba(59,130,246,0.5) 80%, transparent)" }} />
 
             <div style={{ paddingTop: 72 }}>
-                {/* Open Source CTA */}
+                {/* Community CTA */}
                 <div className="container" style={{ marginBottom: 52 }}>
                     <div className="footer-cta" style={{
                         background: "linear-gradient(135deg, rgba(249,115,22,0.06) 0%, rgba(139,92,246,0.08) 50%, rgba(59,130,246,0.06) 100%)",
@@ -97,31 +88,29 @@ export default function Footer() {
                                 <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(249,115,22,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                     <Terminal size={16} color="#f97316" />
                                 </div>
-                                <span style={{ fontSize: 12, fontWeight: 700, color: "#f97316", letterSpacing: "0.08em", textTransform: "uppercase" }}>100% Open Source</span>
+                                <span style={{ fontSize: 12, fontWeight: 700, color: "#f97316", letterSpacing: "0.08em", textTransform: "uppercase" }}>Community-Powered</span>
                             </div>
                             <h3 style={{ fontSize: "clamp(20px, 2.5vw, 28px)", fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.5px", margin: "0 0 10px", lineHeight: 1.3 }}>
-                                Build the future of local dev communities
+                                Join India&apos;s growing tech community network
                             </h3>
                             <p style={{ fontSize: 14, color: "rgba(240,244,255,0.45)", lineHeight: 1.8, margin: 0, maxWidth: 480 }}>
-                                Contribute code, report bugs, suggest features, or star the repo. Every contribution makes DevCircle better for developers across India.
+                                Connect with professionals and freshers in your city. Collaborate on projects, attend local events, and grow together.
                             </p>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: 10, position: "relative", zIndex: 1, flexShrink: 0 }} className="footer-cta-btns">
-                            <a
-                                href="https://github.com/dhananjaykr9/DevCircle"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <Link
+                                href="/auth/signup"
                                 className="btn-primary"
                                 style={{ textDecoration: "none", fontSize: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 28px", borderRadius: 12, justifyContent: "center" }}
                             >
-                                <Star size={16} /> Star on GitHub
-                            </a>
+                                <Star size={16} /> Join DevCircle
+                            </Link>
                             <Link
-                                href="/open-source"
+                                href="/communities"
                                 className="btn-secondary"
                                 style={{ textDecoration: "none", fontSize: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 28px", borderRadius: 12, justifyContent: "center" }}
                             >
-                                <Code2 size={16} /> Start Contributing
+                                <Globe size={16} /> Explore Communities
                             </Link>
                         </div>
                     </div>
@@ -133,7 +122,7 @@ export default function Footer() {
                         {[
                             { icon: <Zap size={20} />, value: "Nagpur", label: "Live City", color: "#10b981", glow: "rgba(16,185,129,0.15)" },
                             { icon: <Globe size={20} />, value: "11+", label: "Cities Waitlisted", color: "#8b5cf6", glow: "rgba(139,92,246,0.15)" },
-                            { icon: <Code2 size={20} />, value: "100%", label: "Open Source", color: "#f97316", glow: "rgba(249,115,22,0.15)" },
+                            { icon: <Code2 size={20} />, value: "100%", label: "Community Driven", color: "#f97316", glow: "rgba(249,115,22,0.15)" },
                             { icon: <Shield size={20} />, value: "Free", label: "Forever", color: "#3b82f6", glow: "rgba(59,130,246,0.15)" },
                         ].map((stat) => (
                             <div key={stat.label} style={{ background: "rgba(5,8,15,0.95)", padding: "28px 20px", textAlign: "center", position: "relative" }}>
@@ -156,7 +145,7 @@ export default function Footer() {
                                     <Image src="/images/3logo.png" alt="DevCircle" width={114} height={38} unoptimized style={{ objectFit: "contain", borderRadius: 10 }} />
                                 </Link>
                                 <p style={{ fontSize: 14, color: "rgba(240,244,255,0.45)", lineHeight: 1.85, marginBottom: 22, maxWidth: 300 }}>
-                                    Hyper-local open-source tech community platform connecting developers across Indian cities.
+                                    Hyper-local tech community connecting professionals and freshers across cities in India. A community-powered platform for collaboration, knowledge sharing, and local tech events.
                                 </p>
 
                                 {/* Social Buttons */}
@@ -185,31 +174,11 @@ export default function Footer() {
                                 </ul>
                             </div>
 
-                            {/* Open Source Column */}
-                            <div>
-                                <h4 style={{ fontSize: 11, fontWeight: 700, color: "rgba(240,244,255,0.3)", marginBottom: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>Open Source</h4>
-                                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
-                                    {openSourceLinks.map((link) => (
-                                        <li key={link.label}>
-                                            {link.external ? (
-                                                <a href={link.href} target="_blank" rel="noopener noreferrer" className="footer-link" style={{ color: "rgba(240,244,255,0.5)", textDecoration: "none", fontSize: 14, transition: "all 0.2s", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                                                    {link.label} <ArrowUpRight size={11} style={{ opacity: 0.35 }} />
-                                                </a>
-                                            ) : (
-                                                <Link href={link.href} className="footer-link" style={{ color: "rgba(240,244,255,0.5)", textDecoration: "none", fontSize: 14, transition: "all 0.2s" }}>
-                                                    {link.label}
-                                                </Link>
-                                            )}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            {/* Community + Support Column */}
+                            {/* Community Column */}
                             <div>
                                 <h4 style={{ fontSize: 11, fontWeight: 700, color: "rgba(240,244,255,0.3)", marginBottom: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>Community</h4>
                                 <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
-                                    {communityLinks.map((link) => (
+                                    {communityAboutLinks.map((link) => (
                                         <li key={link.label}>
                                             <Link href={link.href} className="footer-link" style={{ color: "rgba(240,244,255,0.5)", textDecoration: "none", fontSize: 14, transition: "all 0.2s" }}>
                                                 {link.label}
@@ -217,7 +186,11 @@ export default function Footer() {
                                         </li>
                                     ))}
                                 </ul>
-                                <h4 style={{ fontSize: 11, fontWeight: 700, color: "rgba(240,244,255,0.3)", marginTop: 28, marginBottom: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>Support</h4>
+                            </div>
+
+                            {/* Resources + Support Column */}
+                            <div>
+                                <h4 style={{ fontSize: 11, fontWeight: 700, color: "rgba(240,244,255,0.3)", marginBottom: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>Resources</h4>
                                 <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
                                     {resourceLinks.map((link) => (
                                         <li key={link.label}>

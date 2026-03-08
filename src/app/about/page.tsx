@@ -4,13 +4,13 @@ import { Users, MapPin, Code2, Heart, Globe, Zap, Shield, GitBranch } from "luci
 
 export const metadata = {
     title: "About — DevCircle",
-    description: "Learn about DevCircle, the open-source hyper-local tech community platform connecting professionals across Indian cities.",
+    description: "Learn about DevCircle, the community-driven tech platform connecting professionals and freshers across Indian cities.",
 };
 
 const values = [
     { icon: <Users size={24} />, title: "Community First", description: "Every decision is driven by what's best for our community of developers, designers, and tech enthusiasts." },
     { icon: <MapPin size={24} />, title: "Hyper-Local", description: "We believe the strongest connections happen locally. DevCircle organizes communities city-by-city for real-world impact." },
-    { icon: <Code2 size={24} />, title: "Open Source", description: "DevCircle is 100% open-source. Every line of code is transparent, auditable, and community-owned." },
+    { icon: <Code2 size={24} />, title: "Community Driven", description: "DevCircle is powered by its community. Every feature, event, and initiative is shaped by professionals and freshers who participate." },
     { icon: <Heart size={24} />, title: "Inclusive", description: "We welcome everyone — from first-year students to seasoned architects. Diversity makes us stronger." },
     { icon: <Globe size={24} />, title: "Accessible", description: "Free forever. No paywalls, no premium tiers. Quality community tools should be available to all." },
     { icon: <Shield size={24} />, title: "Safe & Respectful", description: "We enforce a strict Code of Conduct to ensure every member feels welcome and respected." },
@@ -18,7 +18,7 @@ const values = [
 
 const stats = [
     { value: "8+", label: "City Communities" },
-    { value: "100%", label: "Open Source" },
+    { value: "100%", label: "Community Driven" },
     { value: "Free", label: "Forever" },
     { value: "0", label: "Paywalls" },
 ];
@@ -35,11 +35,11 @@ export default function AboutPage() {
                     <h1 style={{ fontSize: 44, fontWeight: 800, color: "#f0f4ff", fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-1.5px", lineHeight: 1.15, margin: "0 0 20px" }}>
                         Building India&apos;s Largest<br />
                         <span style={{ background: "linear-gradient(135deg, #f97316, #fb923c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                            Open-Source Dev Community
+                            Community-Driven Tech Network
                         </span>
                     </h1>
                     <p style={{ fontSize: 17, color: "rgba(240,244,255,0.55)", lineHeight: 1.7, maxWidth: 620, margin: "0 auto" }}>
-                        DevCircle is a community-driven, open-source platform that connects technology professionals and freshers across cities in India — enabling real-world collaboration, mentorship, and growth.
+                        DevCircle is a community-driven platform that enables technology professionals and freshers to connect, collaborate, and grow through local tech communities, discussions, mentorship, and events across cities in India.
                     </p>
                 </div>
             </section>
@@ -102,7 +102,7 @@ export default function AboutPage() {
                     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
                         {[
                             { step: "1", title: "Join Your City", desc: "Sign up and select your city. You'll instantly be connected with the local tech community — developers, designers, and founders in your area." },
-                            { step: "2", title: "Engage & Collaborate", desc: "Participate in discussions, attend local events, join open-source projects, find mentors, and discover job opportunities — all tailored to your city." },
+                            { step: "2", title: "Engage & Collaborate", desc: "Participate in discussions, attend local events, join community projects, find mentors, and discover job opportunities — all tailored to your city." },
                             { step: "3", title: "Grow Together", desc: "Earn reputation through contributions, climb the leaderboard, mentor newcomers, propose governance changes, and help shape the future of your community." },
                         ].map(item => (
                             <div key={item.step} className="glass-card" style={{ padding: "28px 32px", display: "flex", alignItems: "flex-start", gap: 20 }}>
@@ -117,21 +117,21 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Open Source CTA */}
+            {/* Community CTA */}
             <section className="section" style={{ padding: "0 0 80px" }}>
                 <div className="container" style={{ maxWidth: 700 }}>
                     <div className="glass-card" style={{ padding: 48, textAlign: "center", border: "1px solid rgba(249,115,22,0.15)" }}>
                         <GitBranch size={32} color="#f97316" style={{ marginBottom: 16 }} />
-                        <h2 style={{ fontSize: 24, fontWeight: 800, color: "#f0f4ff", margin: "0 0 12px" }}>Built in the Open</h2>
+                        <h2 style={{ fontSize: 24, fontWeight: 800, color: "#f0f4ff", margin: "0 0 12px" }}>Built by the Community</h2>
                         <p style={{ fontSize: 15, color: "rgba(240,244,255,0.5)", lineHeight: 1.7, marginBottom: 28, maxWidth: 480, marginLeft: "auto", marginRight: "auto" }}>
-                            DevCircle is fully open-source. Contribute code, report bugs, suggest features, or simply explore how we build community software.
+                            DevCircle is a community-powered tech ecosystem. Join local communities, share knowledge, participate in events, and help shape the future of tech collaboration in India.
                         </p>
                         <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-                            <a href="https://github.com/devcircle" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ textDecoration: "none", fontSize: 14 }}>
-                                View on GitHub
-                            </a>
-                            <Link href="/open-source" className="btn-secondary" style={{ textDecoration: "none", fontSize: 14 }}>
-                                Contribution Guide
+                            <Link href="/communities" className="btn-primary" style={{ textDecoration: "none", fontSize: 14 }}>
+                                Explore Communities
+                            </Link>
+                            <Link href="/guidelines" className="btn-secondary" style={{ textDecoration: "none", fontSize: 14 }}>
+                                Community Guidelines
                             </Link>
                         </div>
                     </div>

@@ -20,8 +20,8 @@ const sections = [
         icon: <Globe size={22} />,
         title: "2. Platform Description",
         paragraphs: [
-            "DevCircle is an open-source, community-driven platform that connects technology professionals across cities in India. The platform provides discussions, events, project sharing, mentorship, job listings, governance, and other community features.",
-            "DevCircle is provided 'as is' and 'as available.' As an open-source community project, we strive for reliability but do not guarantee uninterrupted service or data permanence.",
+            "DevCircle is a community-driven platform that connects technology professionals and freshers across cities in India. The platform provides discussions, events, project sharing, mentorship, job listings, governance, and other community features.",
+            "DevCircle is provided 'as is' and 'as available.' As a community-driven platform, we strive for reliability but do not guarantee uninterrupted service or data permanence.",
         ],
     },
     {
@@ -39,7 +39,7 @@ const sections = [
         paragraphs: [
             "You retain ownership of all content you post on DevCircle (discussions, comments, projects, job listings, etc.). By posting content, you grant DevCircle a non-exclusive, worldwide license to display, distribute, and make available your content within the platform.",
             "You are responsible for ensuring you have the right to share any content you post. Do not post copyrighted material, proprietary code, or confidential information belonging to others without proper authorization.",
-            "The DevCircle platform code itself is open-source and licensed under its respective open-source license. The community content is owned by its respective authors.",
+            "The community content posted on DevCircle is owned by its respective authors.",
         ],
     },
     {
@@ -91,10 +91,10 @@ const sections = [
     },
     {
         icon: <Scale size={22} />,
-        title: "10. Open Source",
+        title: "10. Community Participation",
         paragraphs: [
-            "DevCircle's platform code is open-source. Contributions to the codebase are governed by the project's open-source license and Contribution Guidelines.",
-            "Being open-source means anyone can inspect, audit, and contribute to the platform's code. This transparency is a core part of our commitment to the community.",
+            "DevCircle is a community-driven platform. Community activities such as discussions, events, mentorship, and project collaboration are open to all members.",
+            "The platform infrastructure, including the website, backend services, and database, is managed by the DevCircle platform team. Community participation and moderation are governed by our Community Guidelines and Code of Conduct.",
         ],
     },
 ];

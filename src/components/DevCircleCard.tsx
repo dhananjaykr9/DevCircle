@@ -2,8 +2,8 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import html2canvas from 'html2canvas';
-import { Download, MapPin, Briefcase } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
+import { Download } from 'lucide-react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 interface DevCircleCardProps {
     user: {
@@ -34,15 +34,18 @@ export default function DevCircleCard({ user }: DevCircleCardProps) {
         try {
             await document.fonts.ready;
             await new Promise(res => setTimeout(res, 300));
-            const canvas = await html2canvas(cardRef.current, {
+            const el = cardRef.current;
+            const canvas = await html2canvas(el, {
                 scale: 3,
                 useCORS: true,
                 backgroundColor: null,
                 logging: false,
-                width: 300,  // Shrink explicit width slightly
-                height: 500, // Shrink explicit height slightly
-                windowWidth: 300,
-                windowHeight: 500,
+                scrollX: 0,
+                scrollY: 0,
+                onclone: (_doc: Document, clonedEl: HTMLElement) => {
+                    clonedEl.style.transform = 'none';
+                    clonedEl.style.transition = 'none';
+                }
             });
             const image = canvas.toDataURL("image/png", 1.0);
             const link = document.createElement("a");
@@ -111,8 +114,6 @@ export default function DevCircleCard({ user }: DevCircleCardProps) {
                         boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.8)",
                         fontFamily: "'Inter', sans-serif",
                         border: "1px solid rgba(255,255,255,0.1)",
-                        display: "flex",
-                        flexDirection: "column"
                     }}
                 >
                     {/* Background Orbs (html2canvas compatible radial gradients) */}
@@ -120,25 +121,25 @@ export default function DevCircleCard({ user }: DevCircleCardProps) {
                     <div style={{ position: "absolute", bottom: -150, left: -150, width: 350, height: 350, background: "radial-gradient(circle, rgba(139,92,246,0.5) 0%, rgba(139,92,246,0) 70%)", borderRadius: "50%", pointerEvents: "none", zIndex: 0 }} />
 
                     {/* Background Grid */}
-                    <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)", backgroundSize: "20px 20px", backgroundPosition: "center", pointerEvents: "none" }} />
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)", backgroundSize: "20px 20px", backgroundPosition: "center", pointerEvents: "none" }} />
 
                     {/* TOP: Company Branding */}
-                    <div style={{ padding: "20px 20px 14px", display: "flex", flexDirection: "column", alignItems: "center", position: "relative", zIndex: 10, borderBottom: "1px solid rgba(255,255,255,0.05)", background: "rgba(0,0,0,0.2)" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                            <div style={{ width: 28, height: 28, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 10px rgba(249,115,22,0.4)", overflow: "hidden", background: "#fff" }}>
+                    <div style={{ padding: "20px 20px 14px", textAlign: "center", position: "relative", zIndex: 10, borderBottom: "1px solid rgba(255,255,255,0.05)", background: "rgba(0,0,0,0.2)" }}>
+                        <div style={{ display: "inline-flex", alignItems: "center", marginBottom: 4 }}>
+                            <div style={{ width: 28, height: 28, borderRadius: 8, overflow: "hidden", background: "#fff", marginRight: 8, flexShrink: 0, boxShadow: "0 4px 10px rgba(249,115,22,0.4)" }}>
                                 <img src="/images/favicon-rounded.png" alt="DevCircle Logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} crossOrigin="anonymous" />
                             </div>
-                            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 800, lineHeight: "20px" }}>
+                            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 800, lineHeight: "26px" }}>
                                 <span style={{ color: "rgba(255,255,255,0.9)" }}>Dev</span><span style={{ color: "rgba(255,255,255,0.6)" }}>Circle</span>
                             </div>
                         </div>
-                        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, lineHeight: "9px", marginTop: 4 }}>
+                        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, lineHeight: "14px", marginTop: 4 }}>
                             Official Network ID
                         </div>
                     </div>
 
                     {/* PHOTO & NAME */}
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "14px 20px 8px", position: "relative", zIndex: 10 }}>
+                    <div style={{ textAlign: "center", padding: "14px 20px 8px", position: "relative", zIndex: 10 }}>
                         <div style={{
                             width: 80,
                             height: 80,
@@ -147,7 +148,8 @@ export default function DevCircleCard({ user }: DevCircleCardProps) {
                             background: "linear-gradient(135deg, #f97316, #8b5cf6)",
                             boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
                             marginBottom: 12,
-                            position: "relative"
+                            position: "relative",
+                            display: "inline-block",
                         }}>
                             <div style={{ width: "100%", height: "100%", borderRadius: 14, overflow: "hidden", background: "#050505" }}>
                                 <img src={avatar} alt={user.name || "User"} style={{ width: "100%", height: "100%", objectFit: "cover" }} crossOrigin="anonymous" />
@@ -159,35 +161,31 @@ export default function DevCircleCard({ user }: DevCircleCardProps) {
                             )}
                         </div>
 
-                        <h2 style={{ fontSize: 24, fontWeight: 800, margin: "0 0 6px 0", fontFamily: "'Space Grotesk', sans-serif", textAlign: "center", lineHeight: "24px", display: "inline-block" }}>
+                        <h2 style={{ fontSize: 24, fontWeight: 800, margin: "0 0 6px 0", fontFamily: "'Space Grotesk', sans-serif", lineHeight: "30px" }}>
                             {user.name}
                         </h2>
 
-                        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                            <div style={{ fontSize: 12, color: "#f97316", display: "flex", alignItems: "center", gap: 5, fontWeight: 600, lineHeight: "12px" }}>
-                                <Briefcase size={12} /> {user.jobTitle || 'Developer'}
-                            </div>
+                        <div style={{ fontSize: 12, lineHeight: "18px", marginBottom: 8 }}>
+                            <span style={{ color: "#f97316", fontWeight: 600 }}>{user.jobTitle || 'Developer'}</span>
                             {user.city && (
                                 <>
-                                    <div style={{ width: 4, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.2)" }} />
-                                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: 5, fontWeight: 500, lineHeight: "12px" }}>
-                                        <MapPin size={11} /> {user.city.name}
-                                    </div>
+                                    <span style={{ color: "rgba(255,255,255,0.25)", margin: "0 6px" }}>{"\u2022"}</span>
+                                    <span style={{ color: "rgba(255,255,255,0.5)", fontWeight: 500 }}>{user.city.name}</span>
                                 </>
                             )}
                         </div>
                     </div>
 
                     {/* DETAILS & TAGS (Side-by-side columns) */}
-                    <div style={{ padding: "0 24px 16px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, position: "relative", zIndex: 10, flex: 1 }}>
+                    <div style={{ padding: "0 24px 16px", display: "flex", position: "relative", zIndex: 10 }}>
 
                         {/* Column 1: Level */}
-                        <div style={{ background: "rgba(255,255,255,0.02)", padding: 10, borderRadius: 12, border: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 8, lineHeight: "9px" }}>
+                        <div style={{ flex: 1, marginRight: 8, background: "rgba(255,255,255,0.02)", padding: 10, borderRadius: 12, border: "1px solid rgba(255,255,255,0.05)", textAlign: "center" }}>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 8, lineHeight: "14px" }}>
                                 Level
                             </div>
                             {user.experienceLevel ? (
-                                <span style={{ fontSize: 10, padding: "5px 10px", background: "rgba(139,92,246,0.15)", color: "#c4b5fd", borderRadius: 6, border: "1px solid rgba(139,92,246,0.3)", fontWeight: 600, textAlign: "center" }}>
+                                <span style={{ fontSize: 10, padding: "5px 10px", background: "rgba(139,92,246,0.15)", color: "#c4b5fd", borderRadius: 6, border: "1px solid rgba(139,92,246,0.3)", fontWeight: 600, display: "inline-block" }}>
                                     {user.experienceLevel}
                                 </span>
                             ) : (
@@ -196,13 +194,13 @@ export default function DevCircleCard({ user }: DevCircleCardProps) {
                         </div>
 
                         {/* Column 2: Top Skills */}
-                        <div style={{ background: "rgba(255,255,255,0.02)", padding: 10, borderRadius: 12, border: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 8, lineHeight: "9px" }}>
+                        <div style={{ flex: 1, marginLeft: 8, background: "rgba(255,255,255,0.02)", padding: 10, borderRadius: 12, border: "1px solid rgba(255,255,255,0.05)", textAlign: "center" }}>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 8, lineHeight: "14px" }}>
                                 Core Stack
                             </div>
-                            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 4 }}>
+                            <div style={{ textAlign: "center" }}>
                                 {skillsList.length > 0 ? skillsList.slice(0, 3).map((skill: string) => (
-                                    <span key={skill} style={{ fontSize: 9, padding: "3px 8px", background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)", borderRadius: 6, border: "1px solid rgba(255,255,255,0.15)", fontWeight: 500 }}>
+                                    <span key={skill} style={{ fontSize: 9, padding: "3px 8px", background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)", borderRadius: 6, border: "1px solid rgba(255,255,255,0.15)", fontWeight: 500, display: "inline-block", margin: 2 }}>
                                         {skill.trim()}
                                     </span>
                                 )) : (
@@ -214,37 +212,37 @@ export default function DevCircleCard({ user }: DevCircleCardProps) {
                     </div>
 
                     {/* BOTTOM: Id, Rep & Scan */}
-                    <div style={{ background: "#0e1320", borderTop: "1px solid rgba(255,255,255,0.08)", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", position: "relative", zIndex: 10, marginTop: "auto" }}>
+                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "#0e1320", borderTop: "1px solid rgba(255,255,255,0.08)", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", zIndex: 10 }}>
                         <div>
-                            <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 4, lineHeight: "8px" }}>
+                            <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 4, lineHeight: "12px" }}>
                                 Member ID
                             </div>
-                            <div style={{ fontFamily: "'Courier New', Courier, monospace", fontSize: 13, color: "rgba(255,255,255,0.8)", fontWeight: 700, marginBottom: 10, lineHeight: "13px" }}>
+                            <div style={{ fontFamily: "'Courier New', Courier, monospace", fontSize: 13, color: "rgba(255,255,255,0.8)", fontWeight: 700, marginBottom: 10, lineHeight: "18px" }}>
                                 DC-{user.id.slice(0, 8).toUpperCase()}
                             </div>
 
-                            <div style={{ display: "flex", gap: 14 }}>
-                                <div>
-                                    <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 2, lineHeight: "8px" }}>
+                            <div style={{ display: "flex" }}>
+                                <div style={{ marginRight: 14 }}>
+                                    <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 2, lineHeight: "12px" }}>
                                         Reputation
                                     </div>
-                                    <div style={{ fontSize: 14, fontWeight: 800, color: "#fbbf24", fontFamily: "'Space Grotesk', sans-serif", lineHeight: "14px" }}>
+                                    <div style={{ fontSize: 14, fontWeight: 800, color: "#fbbf24", fontFamily: "'Space Grotesk', sans-serif", lineHeight: "20px" }}>
                                         ⭐ {user.reputation}
                                     </div>
                                 </div>
                                 <div>
-                                    <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 2, lineHeight: "8px" }}>
+                                    <div style={{ fontSize: 8, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontWeight: 700, marginBottom: 2, lineHeight: "12px" }}>
                                         Joined
                                     </div>
-                                    <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.8)", fontFamily: "'Space Grotesk', sans-serif", marginTop: 2, lineHeight: "12px" }}>
+                                    <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.8)", fontFamily: "'Space Grotesk', sans-serif", marginTop: 2, lineHeight: "18px" }}>
                                         {joinedYear}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div style={{ background: "white", padding: 5, borderRadius: 6, display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                            <QRCodeSVG
+                        <div style={{ background: "white", padding: 5, borderRadius: 6, flexShrink: 0 }}>
+                            <QRCodeCanvas
                                 value={baseUrl ? `${baseUrl}/network/${user.id}` : `https://devcircle.com/network/${user.id}`}
                                 size={40}
                                 level="M"

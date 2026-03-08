@@ -1,6 +1,6 @@
 # Contributing to DevCircle
 
-Welcome to DevCircle! DevCircle is an open-source, community-driven platform built to connect technology professionals locally within their cities.
+Welcome to DevCircle! DevCircle is a community-driven platform built to connect technology professionals and freshers locally within their cities.
 
 We believe that the best tech communities are built by the developers themselves. We'd love your help in making this platform better for everyone.
 

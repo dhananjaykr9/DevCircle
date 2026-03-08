@@ -30,7 +30,7 @@ const features = [
   {
     icon: <Code2 size={22} />,
     title: "Project Collaboration",
-    desc: "Find co-founders, collaborators, and contributors for startups, open-source, and research.",
+    desc: "Find co-founders, collaborators, and contributors for startups, community projects, and research.",
     color: "#10b981",
     glow: "rgba(16,185,129,0.18)",
   },

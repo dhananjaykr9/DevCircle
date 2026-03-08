@@ -467,7 +467,7 @@ export default async function CityPage({ params, searchParams }: { params: Promi
                                                 {[
                                                     { icon: <Globe size={16} />, title: "Hyper-Local Focus", desc: "We believe the strongest tech communities are rooted in local connections. Meet people you can grab coffee with.", color: "#3b82f6" },
                                                     { icon: <Shield size={16} />, title: "Inclusive & Safe", desc: "Zero tolerance for toxicity. We welcome developers of all experience levels, backgrounds, and tech stacks.", color: "#10b981" },
-                                                    { icon: <Code2 size={16} />, title: "Open Source First", desc: "DevCircle itself is open source. We practice what we preach — transparency and collaboration.", color: "#f97316" },
+                                                    { icon: <Code2 size={16} />, title: "Community Driven", desc: "DevCircle is built by its community. Every feature is shaped by the people who use it — transparency and collaboration.", color: "#f97316" },
                                                     { icon: <Coffee size={16} />, title: "Free Forever", desc: "No premium tiers, no paywalls. DevCircle is and will always be free for every developer.", color: "#f59e0b" },
                                                 ].map((value) => (
                                                     <div key={value.title} style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>

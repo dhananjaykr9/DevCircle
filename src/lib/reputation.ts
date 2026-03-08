@@ -20,7 +20,7 @@ export const BADGE_CATALOG = [
     // Governance badges
     { slug: "moderator", name: "Moderator", description: "Trusted community moderator.", icon: "🛡️", category: "Community" },
     // Projects
-    { slug: "collaborator", name: "Collaborator", description: "Posted an open-source or team project.", icon: "💻", category: "Community" },
+    { slug: "collaborator", name: "Collaborator", description: "Posted a collaborative or team project.", icon: "💻", category: "Community" },
 ];
 
 // ─────────────────────────────────────────────────────────────

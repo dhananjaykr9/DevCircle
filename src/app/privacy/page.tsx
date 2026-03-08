@@ -34,7 +34,7 @@ const sections = [
         content: [
             { subtitle: "Encryption", text: "All data transmitted between your browser and DevCircle servers is encrypted using HTTPS/TLS. Passwords are hashed using bcrypt and never stored in plain text." },
             { subtitle: "Access Control", text: "Access to the database and server infrastructure is restricted to authorized maintainers only. We follow the principle of least privilege." },
-            { subtitle: "Open Source", text: "DevCircle's codebase is fully open-source, meaning our data handling practices are transparent and auditable by anyone." },
+            { subtitle: "Transparency", text: "DevCircle is committed to transparent data handling practices. Our privacy approach is guided by our community-first values." },
         ],
     },
     {

@@ -15,7 +15,7 @@ const categories = [
         articles: [
             { q: "How do I create an account?", a: "Click 'Join DevCircle' on the homepage or navigate to the signup page. You can sign up with your email, GitHub, or Google account." },
             { q: "How do I join my city's community?", a: "During onboarding, select your city from the available list. You can change your city later from your profile settings." },
-            { q: "Is DevCircle free to use?", a: "Yes! DevCircle is 100% free and open-source. There are no premium plans, no paywalls — community tools should be accessible to everyone." },
+            { q: "Is DevCircle free to use?", a: "Yes! DevCircle is 100% free and community-powered. There are no premium plans, no paywalls — community tools should be accessible to everyone." },
             { q: "How do I complete my profile?", a: "Go to Profile → Edit Profile. Add your skills, interests, experience level, bio, and connect your GitHub account for a stronger profile." },
         ],
     },

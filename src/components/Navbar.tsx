@@ -20,7 +20,7 @@ const primaryLinks = [
     { href: "/discussions", label: "Discussions", icon: <MessageSquare size={16} />, authOnly: false },
     { href: "/events", label: "Events", icon: <Calendar size={16} />, authOnly: false },
     { href: "/projects", label: "Projects", icon: <FolderGit2 size={16} />, authOnly: false },
-    { href: "/open-source", label: "Open Source", icon: <Github size={16} />, authOnly: false },
+    { href: "/mentorship", label: "Mentorship", icon: <Lightbulb size={16} />, authOnly: false },
 ];
 
 const moreMenuSections = [

@@ -103,7 +103,7 @@ export const MockProjects = [
     {
         id: "mock-proj-1",
         title: "DevCircle Platform",
-        description: "An open-source platform connecting local developers. We are building the next generation of hyper-local tech communities.",
+        description: "A community-driven platform connecting local developers. We are building the next generation of hyper-local tech communities.",
         content: "Detailed content about the DevCircle platform architecture...",
         status: "Active",
         type: "Open Source",
