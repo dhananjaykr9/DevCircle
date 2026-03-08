@@ -5,8 +5,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
-    Menu, X, MapPin, Bell, ChevronDown, Sparkles, MessageSquare,
-    Briefcase, Calendar, Users, Github, Settings, LogOut, BookOpen,
+    X, MapPin, Bell, ChevronDown, Sparkles, MessageSquare,
+    Briefcase, Calendar, Users, Settings, LogOut, BookOpen,
     BarChart3, Shield, Vote, Lightbulb, Trophy, FolderGit2, Rocket
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
@@ -378,13 +378,58 @@ export default function Navbar() {
                         </div>
                     )}
 
-                    {/* Mobile Menu Toggle */}
+                    {/* ── Tech Hamburger ── */}
                     <button
-                        onClick={() => setMobileOpen(true)}
-                        style={{ background: "none", border: "none", color: "rgba(240,244,255,0.8)", cursor: "pointer", padding: 4 }}
-                        className="show-tablet"
+                        onClick={() => setMobileOpen(o => !o)}
+                        className="show-tablet tech-hamburger"
+                        aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                        style={{
+                            background: mobileOpen ? "rgba(249,115,22,0.08)" : "transparent",
+                            border: `1px solid ${mobileOpen ? "rgba(249,115,22,0.35)" : "rgba(249,115,22,0.15)"}`,
+                            borderRadius: 10,
+                            cursor: "pointer",
+                            width: 42,
+                            height: 42,
+                            position: "relative",
+                            transition: "all 0.3s ease",
+                            padding: 0,
+                            flexShrink: 0,
+                        }}
                     >
-                        <Menu size={22} />
+                        <span style={{
+                            position: "absolute", left: "50%", top: "50%",
+                            width: mobileOpen ? 20 : 16, height: 2,
+                            background: "linear-gradient(90deg, #f97316, #fb923c)",
+                            borderRadius: 1,
+                            transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+                            transform: mobileOpen
+                                ? "translate(-50%, -50%) rotate(45deg)"
+                                : "translate(-50%, calc(-50% - 6px))",
+                        }} />
+                        <span style={{
+                            position: "absolute", left: "50%", top: "50%",
+                            width: 20, height: 2,
+                            background: "linear-gradient(90deg, #f97316, #8b5cf6)",
+                            borderRadius: 1,
+                            transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+                            transform: "translate(-50%, -50%)",
+                            opacity: mobileOpen ? 0 : 1,
+                        }} />
+                        <span style={{
+                            position: "absolute", left: "50%", top: "50%",
+                            width: mobileOpen ? 20 : 12, height: 2,
+                            background: "linear-gradient(90deg, #fb923c, #8b5cf6)",
+                            borderRadius: 1,
+                            transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+                            transform: mobileOpen
+                                ? "translate(-50%, -50%) rotate(-45deg)"
+                                : "translate(-50%, calc(-50% + 6px))",
+                        }} />
+                        {/* Corner brackets – tech HUD detail */}
+                        <span style={{ position: "absolute", top: 4, left: 4, width: 6, height: 6, borderTop: "1.5px solid rgba(249,115,22,0.3)", borderLeft: "1.5px solid rgba(249,115,22,0.3)", borderRadius: "2px 0 0 0" }} />
+                        <span style={{ position: "absolute", top: 4, right: 4, width: 6, height: 6, borderTop: "1.5px solid rgba(139,92,246,0.3)", borderRight: "1.5px solid rgba(139,92,246,0.3)", borderRadius: "0 2px 0 0" }} />
+                        <span style={{ position: "absolute", bottom: 4, left: 4, width: 6, height: 6, borderBottom: "1.5px solid rgba(249,115,22,0.3)", borderLeft: "1.5px solid rgba(249,115,22,0.3)", borderRadius: "0 0 0 2px" }} />
+                        <span style={{ position: "absolute", bottom: 4, right: 4, width: 6, height: 6, borderBottom: "1.5px solid rgba(139,92,246,0.3)", borderRight: "1.5px solid rgba(139,92,246,0.3)", borderRadius: "0 0 2px 0" }} />
                     </button>
                 </div>
             </div>
@@ -580,6 +625,11 @@ export default function Navbar() {
                 .nav-link-item:hover {
                     color: #f0f4ff !important;
                     background: rgba(255,255,255,0.05) !important;
+                }
+
+                .tech-hamburger:hover {
+                    border-color: rgba(249,115,22,0.4) !important;
+                    box-shadow: 0 0 15px rgba(249,115,22,0.15), inset 0 0 15px rgba(249,115,22,0.05);
                 }
             `}</style>
         </nav>
