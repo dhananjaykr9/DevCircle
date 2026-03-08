@@ -54,6 +54,13 @@ const legalLinks = [
     { href: "/code-of-conduct", label: "Code of Conduct" },
 ];
 
+const techStack = [
+    { name: "Next.js" },
+    { name: "TypeScript" },
+    { name: "Prisma" },
+    { name: "PostgreSQL" },
+    { name: "NextAuth" },
+];
 
 export default function Footer() {
     return (
@@ -161,6 +168,7 @@ export default function Footer() {
                                         <Sparkles size={15} /> Feedback
                                     </a>
                                 </div>
+
                             </div>
 
                             {/* Platform Column */}
