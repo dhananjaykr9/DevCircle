@@ -4,6 +4,20 @@ import authConfig from "../auth.config";
 
 const { auth } = NextAuth(authConfig);
 
+function buildCspHeader(nonce: string): string {
+    return [
+        "default-src 'self'",
+        `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' https://fonts.gstatic.com",
+        "img-src 'self' data: blob: https:",
+        "connect-src 'self' https:",
+        "frame-ancestors 'self'",
+        "base-uri 'self'",
+        "form-action 'self'",
+    ].join("; ");
+}
+
 // Pages accessible without login (demo / read-only browsing)
 const PUBLIC_PATHS = new Set([
     '/',
@@ -49,30 +63,40 @@ export default auth((req) => {
     const isAuthRoute = pathname.startsWith('/auth');
     const _isPublic = isPublicRoute(pathname);
 
+    // Generate per-request nonce for Content-Security-Policy
+    const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+    const csp = buildCspHeader(nonce);
+
+    const redirect = (path: string) => {
+        const res = NextResponse.redirect(new URL(path, req.url));
+        res.headers.set('Content-Security-Policy', csp);
+        return res;
+    };
+
+    const next = () => {
+        const requestHeaders = new Headers(req.headers);
+        requestHeaders.set('x-nonce', nonce);
+        const res = NextResponse.next({ request: { headers: requestHeaders } });
+        res.headers.set('Content-Security-Policy', csp);
+        return res;
+    };
+
     // 1. If trying to access Auth pages while logged in
     if (isAuthRoute) {
-        if (isLoggedIn) {
-            return NextResponse.redirect(new URL(isOnboarded ? '/feed' : '/onboarding', req.url));
-        }
-        return NextResponse.next();
+        if (isLoggedIn) return redirect(isOnboarded ? '/feed' : '/onboarding');
+        return next();
     }
 
     // 2. If not logged in and trying to access private route
-    if (!isLoggedIn && !_isPublic) {
-        return NextResponse.redirect(new URL('/auth/login', req.url));
-    }
+    if (!isLoggedIn && !_isPublic) return redirect('/auth/login');
 
     // 3. If logged in but NOT onboarded, restrict to /onboarding (allow public routes)
-    if (isLoggedIn && !isOnboarded && pathname !== '/onboarding' && !_isPublic) {
-        return NextResponse.redirect(new URL('/onboarding', req.url));
-    }
+    if (isLoggedIn && !isOnboarded && pathname !== '/onboarding' && !_isPublic) return redirect('/onboarding');
 
     // 4. If logged in AND onboarded, prevent access to /onboarding
-    if (isLoggedIn && isOnboarded && pathname === '/onboarding') {
-        return NextResponse.redirect(new URL('/feed', req.url));
-    }
+    if (isLoggedIn && isOnboarded && pathname === '/onboarding') return redirect('/feed');
 
-    return NextResponse.next();
+    return next();
 });
 
 export const config = {
