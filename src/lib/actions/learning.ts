@@ -20,6 +20,10 @@ export async function submitResource(formData: FormData) {
         throw new Error("Missing required fields");
     }
 
+    if (!/^https?:\/\//i.test(url)) {
+        throw new Error("URL must start with http:// or https://");
+    }
+
     await prisma.resource.create({
         data: {
             title,

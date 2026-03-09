@@ -2,16 +2,33 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "../../../auth";
 
 export async function sendMessage(conversationId: string, senderId: string, text: string) {
+    const session = await auth();
+    if (!session?.user?.id) return { success: false, error: "Unauthorized" };
+
+    // Prevent impersonation: senderId must match the logged-in user
+    if (senderId !== session.user.id) return { success: false, error: "Forbidden" };
+
     if (!text || text.trim() === "") return { success: false, error: "Message cannot be empty" };
+    if (text.length > 5000) return { success: false, error: "Message too long" };
 
     try {
+        // Verify the user is a participant of this conversation
+        const conversation = await prisma.conversation.findUnique({
+            where: { id: conversationId },
+            select: { user1Id: true, user2Id: true }
+        });
+        if (!conversation || (conversation.user1Id !== session.user.id && conversation.user2Id !== session.user.id)) {
+            return { success: false, error: "Forbidden" };
+        }
+
         const message = await prisma.message.create({
             data: {
-                text,
+                text: text.trim(),
                 conversationId,
-                senderId,
+                senderId: session.user.id,
             },
             include: {
                 sender: { select: { id: true, name: true, image: true } }
@@ -33,6 +50,17 @@ export async function sendMessage(conversationId: string, senderId: string, text
 }
 
 export async function initiateConversation(user1Id: string, user2Id: string) {
+    const session = await auth();
+    if (!session?.user?.id) return { success: false, error: "Unauthorized" };
+
+    // The logged-in user must be one of the participants
+    if (session.user.id !== user1Id && session.user.id !== user2Id) {
+        return { success: false, error: "Forbidden" };
+    }
+
+    // Cannot create a conversation with yourself
+    if (user1Id === user2Id) return { success: false, error: "Cannot message yourself" };
+
     try {
         // Find existing
         const existing = await prisma.conversation.findFirst({

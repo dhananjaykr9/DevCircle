@@ -39,11 +39,25 @@ export async function requestMentorship(formData: FormData) {
 }
 
 export async function acceptMentorRequest(requestId: string) {
+    const session = await auth();
+    if (!session?.user?.id) throw new Error("Unauthorized");
+
+    // Verify the logged-in user is the mentor being requested
+    const request = await (prisma as any).mentorRequest.findUnique({ where: { id: requestId } });
+    if (!request || request.mentorId !== session.user.id) throw new Error("Forbidden");
+
     await (prisma as any).mentorRequest.update({ where: { id: requestId }, data: { status: "ACCEPTED" } });
     revalidatePath("/profile");
 }
 
 export async function declineMentorRequest(requestId: string) {
+    const session = await auth();
+    if (!session?.user?.id) throw new Error("Unauthorized");
+
+    // Verify the logged-in user is the mentor being requested
+    const request = await (prisma as any).mentorRequest.findUnique({ where: { id: requestId } });
+    if (!request || request.mentorId !== session.user.id) throw new Error("Forbidden");
+
     await (prisma as any).mentorRequest.update({ where: { id: requestId }, data: { status: "DECLINED" } });
     revalidatePath("/profile");
 }

@@ -33,6 +33,11 @@ export async function voteProposal(proposalId: string, vote: "Yes" | "No") {
         throw new Error("Must be logged in to vote");
     }
 
+    // Runtime validation — TypeScript types are erased at runtime
+    if (vote !== "Yes" && vote !== "No") {
+        throw new Error("Invalid vote value");
+    }
+
     const userId = session.user.id;
 
     const existingVote = await prisma.proposalVote.findUnique({

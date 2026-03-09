@@ -15,6 +15,10 @@ export async function registerUser(formData: FormData) {
         return { error: "Missing required fields" };
     }
 
+    if (password.length < 6) {
+        return { error: "Password must be at least 6 characters" };
+    }
+
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
         return { error: "Email already in use" };
@@ -147,7 +151,8 @@ export async function forgotPassword(formData: FormData) {
     }
 
     const emailSent = !!(process.env.SMTP_EMAIL && process.env.SMTP_PASSWORD);
-    return { success: true, resetUrl: !emailSent ? resetUrl : undefined };
+    const isDev = process.env.NODE_ENV === "development";
+    return { success: true, resetUrl: (!emailSent && isDev) ? resetUrl : undefined };
 }
 
 export async function resetPassword(formData: FormData) {

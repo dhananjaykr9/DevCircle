@@ -20,6 +20,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             return new NextResponse("Missing conversationId", { status: 400 });
         }
 
+        // IDOR protection: verify the user is a participant of this conversation
+        const conversation = await prisma.conversation.findUnique({
+            where: { id: conversationId },
+            select: { user1Id: true, user2Id: true }
+        });
+        if (!conversation || (conversation.user1Id !== currentUser.id && conversation.user2Id !== currentUser.id)) {
+            return new NextResponse("Forbidden", { status: 403 });
+        }
+
         const messages = await prisma.message.findMany({
             where: {
                 conversationId,
@@ -28,7 +37,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             include: {
                 sender: { select: { id: true, name: true, image: true } }
             },
-            orderBy: { createdAt: 'asc' }
+            orderBy: { createdAt: 'asc' },
+            take: 200,
         });
 
         // Mark fetched messages from the OTHER user as read

@@ -22,6 +22,13 @@ export async function updateProfile(formData: FormData) {
     const portfolioUrl = formData.get("portfolioUrl") as string;
     const image = formData.get("image") as string;
 
+    if (github && !/^https?:\/\//i.test(github)) {
+        throw new Error("GitHub URL must start with http:// or https://");
+    }
+    if (portfolioUrl && !/^https?:\/\//i.test(portfolioUrl)) {
+        throw new Error("Portfolio URL must start with http:// or https://");
+    }
+
     // Checkboxes come through as "on" if checked, otherwise null
     const openToMentoring = formData.get("openToMentoring") === "on";
     const openToCollaborate = formData.get("openToCollaborate") === "on";

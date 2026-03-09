@@ -24,6 +24,10 @@ export async function createJob(formData: FormData) {
         throw new Error("Missing required fields");
     }
 
+    if (applyUrl && !/^https?:\/\//i.test(applyUrl)) {
+        throw new Error("Apply URL must start with http:// or https://");
+    }
+
     await prisma.job.create({
         data: {
             title,

@@ -61,6 +61,10 @@ export async function createProject(formData: FormData) {
         throw new Error("Missing required fields");
     }
 
+    if (repositoryUrl && !/^https?:\/\//i.test(repositoryUrl)) {
+        throw new Error("Repository URL must start with http:// or https://");
+    }
+
     await prisma.project.create({
         data: {
             title,
@@ -103,7 +107,13 @@ export async function createEvent(formData: FormData) {
     }
 
     const capacity = parseInt(capacityStr, 10);
+    if (isNaN(capacity) || capacity < 1 || capacity > 100000) {
+        throw new Error("Capacity must be a positive number");
+    }
     const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+        throw new Error("Invalid date");
+    }
 
     await prisma.event.create({
         data: {

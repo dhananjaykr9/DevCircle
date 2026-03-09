@@ -28,7 +28,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate unique filename
-    const ext = file.name.split(".").pop() || "jpg";
+    const allowedExts = ["jpg", "jpeg", "png", "webp", "gif"];
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    if (!allowedExts.includes(ext)) {
+        return NextResponse.json({ error: "Invalid file extension" }, { status: 400 });
+    }
     const safeName = session.user.id.replace(/[^a-zA-Z0-9]/g, "_");
     const filename = `${safeName}_${Date.now()}.${ext}`;
 
