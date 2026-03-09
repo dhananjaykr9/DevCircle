@@ -243,7 +243,7 @@ export default function DevCircleCard({ user }: DevCircleCardProps) {
 
                         <div style={{ background: "white", padding: 5, borderRadius: 6, flexShrink: 0 }}>
                             <QRCodeCanvas
-                                value={baseUrl ? `${baseUrl}/network/${user.id}` : `https://devcircle.com/network/${user.id}`}
+                                value={baseUrl ? `${baseUrl}/members/${user.id}` : `https://dev-circle-chi.vercel.app/members/${user.id}`}
                                 size={40}
                                 level="M"
                                 includeMargin={false}
